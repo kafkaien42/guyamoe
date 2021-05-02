@@ -7,12 +7,13 @@ StartLimitIntervalSec=0
 Type=notify
 Restart=on-failure
 RestartSec=2
-User=milleniumbug
-Environment="ALLOWED_HOSTS=mahoushoujobu.com"
-ExecStart=/home/milleniumbug/mahoushoujobu/bin/uwsgi --ini /home/milleniumbug/mahoushoujobu/app/nginx/uwsgi.ini --module guyamoe.wsgi
+User=ubuntu
+Environment="ALLOWED_HOSTS=51.222.170.214"
+ExecStart=/usr/local/bin/uwsgi --ini /home/ubuntu/guyamoe/nginx/uwsgi.ini --module guyamoe.wsgi:application --socket /home/ubuntu/guyamoe/nginx/socket/guya.sock --chmod-socket=666
+# -s /home/ubuntu/guyamoe/nginx/guyamoe.socket
 StandardOutput=syslog
 StandardError=syslog
-WorkingDirectory=/home/milleniumbug/mahoushoujobu/app
+WorkingDirectory=/home/ubuntu/guyamoe
 
 [Install]
 WantedBy=multi-user.target

@@ -51,7 +51,7 @@ def delete_volume_folder(sender, instance, **kwargs):
     if instance.volume_cover:
         clear_pages_cache()
         folder_path = os.path.join(
-            settings.settings.MEDIA_ROOT,
+            settings.MEDIA_ROOT,
             "manga",
             instance.series.slug,
             "volume_covers",
@@ -97,7 +97,8 @@ def save_volume(sender, instance, **kwargs):
             quality=60,
             method=6,
         )
-        image.save(os.path.join(settings.MEDIA_ROOT, save_dir, f"{filename}.jp2"))
+        # This line crash on my server and this file does not seem be used at all.
+        # image.save(os.path.join(settings.MEDIA_ROOT, save_dir, f"{filename}.jp2"))
         blur = Image.open(os.path.join(settings.MEDIA_ROOT, save_dir, vol_cover))
         blur = blur.convert("RGB")
         blur.thumbnail((blur.width / 8, blur.height / 8), Image.ANTIALIAS)

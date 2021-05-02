@@ -1,15 +1,5 @@
-{% extends "layout.html" %} {% load static %}
-{% block meta %}
-<title>Read {{ series }} | {{ brand.name }}</title>
-<meta name="twitter:description" content="Read {{ series }} manga series by {{ author }}" />
-<meta property="og:description" content="Read {{ series }} manga series by {{ author }}" />
-<meta name="description" content="Read {{ series }} manga series by {{ author }}.{{ alt_titles_str|safe }}" />
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Read {{ series }} | {{ brand.name }}" />
-<meta name="twitter:image" content="{{ brand.image_url }}" />
-<meta property="og:image" content="{{ brand.image_url }}" />
-<meta name="author" content="{{ author }}" />
-{% endblock %}
+{% extends "layout.html" %}
+{% load static %}
 
 {% block head %}
 <script defer>
@@ -75,189 +65,142 @@ var reading_button = null;
 		}
 	}
 
-	async function markAll(e) {
-		let chapters = document.querySelectorAll("tr[data-chapter]").map(e => e.getAttribute("data-chapter"));
-		let slug = "{{ slug }}";
-		let source = "{{ reader_modifier }}".split("/")[1];
-		if (e.classList.contains("all-read")) {
-			await globalHistoryHandler.removeAllChapters(slug, source);
-			e.classList.remove("all-read");
-		} else {
-			await globalHistoryHandler.addChapters(slug, source, chapters);
-			e.classList.add("all-read");
-		}
-		updateAllRead();
-	}
+	// async function markAll(e) {
+	// 	let chapters = document.querySelectorAll("tr[data-chapter]").map(e => e.getAttribute("data-chapter"));
+	// 	let slug = "{{ slug }}";
+	// 	let source = "{{ reader_modifier }}".split("/")[1];
+	// 	if (e.classList.contains("all-read")) {
+	// 		await globalHistoryHandler.removeAllChapters(slug, source);
+	// 		e.classList.remove("all-read");
+	// 	} else {
+	// 		await globalHistoryHandler.addChapters(slug, source, chapters);
+	// 		e.classList.add("all-read");
+	// 	}
+	// 	updateAllRead();
+	// }
 
 	// This function assumes we've applied read already, so we skip a remote trip
-	async function updateRead(chapter, standalone = true, markRead) {
-		let slug = "{{ slug }}";
+	async function updateRead(series_slug, chapter, standalone = true, markRead) {
 		let source = "{{ reader_modifier }}".split("/")[1];
 		if (standalone) {
-			let read = document.querySelectorAll("tr.is-read[data-chapter]").map(e => e.getAttribute("data-chapter"));
-			if (read.includes(chapter)) {
-				document.querySelector(`[data-chapter="${chapter}"]`).classList.remove("is-read");
-				await globalHistoryHandler.removeChapter(slug, source, chapter);
+			let read = document.querySelectorAll("tr.is-read[data-chapter]").map(e => e.getAttribute("data-serie") + e.getAttribute("data-chapter"));
+			if (read.includes(series_slug + chapter)) {
+				document.querySelector(`[data-serie="${series_slug}"],[data-chapter="${chapter}"]`).classList.remove("is-read");
+				await globalHistoryHandler.removeChapter(series_slug, source, chapter);
 			} else {
-				document.querySelector(`[data-chapter="${chapter}"]`).classList.add("is-read");
-				await globalHistoryHandler.addChapter(slug, source, chapter);
+				document.querySelector(`[data-serie="${series_slug}"],[data-chapter="${chapter}"]`).classList.add("is-read");
+				await globalHistoryHandler.addChapter(series_slug, source, chapter);
 			}
 			updateAllRead();
 		} else {
 			if (markRead) {
-				return globalHistoryHandler.addChapter(slug, source, chapter);
+				return globalHistoryHandler.addChapter(series_slug, source, chapter);
 			} else {
-				return globalHistoryHandler.removeChapter(slug, source, chapter);
+				return globalHistoryHandler.removeChapter(series_slug, source, chapter);
 			}
 		}
 	}
 
 	async function updateAllRead() {
-		let slug = "{{ slug }}";
 		let source = "{{ reader_modifier }}".split("/")[1];
-		let read = await globalHistoryHandler.getReadChapters(slug, source);
 
-		if (document.querySelectorAll("tr[data-chapter]").length === read.length) {
-			document.querySelector('th.read-icon').classList.add("all-read");
-		} else {
-			document.querySelector('th.read-icon').classList.remove("all-read");
-		}
-
-		document.querySelectorAll("[data-chapter]").forEach(item => {
+		document.querySelectorAll("[data-chapter]").forEach(async item => {
+			let serie = item.getAttribute("data-serie");
 			let chapter = item.getAttribute("data-chapter");
+			let read = await globalHistoryHandler.getReadChapters(serie, source);
 			if (read.includes(chapter)) {
 				item.classList.add("is-read");
 			} else {
 				item.classList.remove("is-read");
 			}
 		});
-		if(reading_button) return reading_button._struct.draw();
-		reading_button = document.querySelector('.series-content article').appendChild(new readingButton());
+		// if(reading_button) return reading_button._struct.draw();
+		// reading_button = document.querySelector('.series-content article').appendChild(new readingButton());
 	}
 
-	{% if "admin" in available_features %}
-	window.addEventListener("load", () => {
-		document.getElementById("submitForm").addEventListener("click", (e) => {
-			e.preventDefault();
-			document.getElementById("modalSubmit").insertAdjacentHTML("afterbegin", `<div id="uploadingChapter" class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>`);
-			let formElement = document.getElementById("newChapterForm");
-			let formData = new FormData(formElement);
-			formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
-			fetch("/api/upload_new_chapter/{{ slug }}/", {
-				method: 'POST',
-				body: formData
-			}).then(data => data.json()).then(data => {
-				document.getElementById("uploadingChapter").remove();
-				if (data["response"] === "success") {
-					document.getElementById("modalSubmit").insertAdjacentHTML("afterbegin", `<div id="uploadResult" class="btn btn-success"><i class="fa fa-check"></i></div>`);
-				} else {
-					document.getElementById("modalSubmit").insertAdjacentHTML("beforebegin", `<p id="uploadResult">Error uploading chapter.</p>`);
-				}
-				setTimeout(() => document.getElementById("uploadResult").remove(), 5000);
-			}).catch(e => {
-				document.getElementById("uploadingChapter").remove();
-				document.getElementById("modalSubmit").insertAdjacentHTML("beforebegin", `<p id="uploadResult">Unspecified error, the chapter may be partially uploaded.</p>`);
-				setTimeout(() => document.getElementById("uploadResult").remove(), 5000);
-			});
-		});
-	});
 
-	function loadGroups(slug) {
-		let scanGroup = document.getElementById("scanGroup");
-		if (scanGroup.options.length === 0) {
-			fetch("/api/get_all_groups/")
-				.then(data => data.json())
-				.then(data => {
-					for (let group in data) {
-						scanGroup.insertAdjacentHTML("beforeend", `<option value="${data[group]}">${data[group]}</option>`);
-					}
-				});
-		}
-	}
-	{% endif %}
+	// function readingButton() {
+	// 	this.html = `<a class="manga-link chapter">
+	// 		<span class="manga-link-chap"></span><span class="manga-link-text"></span>
+	// 	</a>`;
 
-	function readingButton() {
-		this.html = `<a class="manga-link chapter">
-			<span class="manga-link-chap"></span><span class="manga-link-text"></span>
-		</a>`;
+	// 	this.draw = () => {
+	// 		let slug = "{{ slug }}";
+	// 		let source = "{{ reader_modifier }}".split("/")[1];
+	// 		this.chL = chapterList.map(ch => ch[1]).sort((a,b) => b - a);
+	// 		globalHistoryHandler.getReadChapters(slug, source)
+	// 			.then(this.handleReads)
+	// 			.catch(err => {
+	// 				throw err;
+	// 			});
+	// 	}
 
-		this.draw = () => {
-			let slug = "{{ slug }}";
-			let source = "{{ reader_modifier }}".split("/")[1];
-			this.chL = chapterList.map(ch => ch[1]).sort((a,b) => b - a);
-			globalHistoryHandler.getReadChapters(slug, source)
-				.then(this.handleReads)
-				.catch(err => {
-					throw err;
-				});
-		}
+	// 	this.handleReads = (read) => {
+	// 		if(!read || read.length < 1) {
+	// 			return this.setButton('start', this.chL[this.chL.length - 1]);
+	// 		}
+	// 		read = read.sort((a,b) => b - a);
+	// 		if(read[0] == this.chL[0] || (this.chL[1] && read[0] == this.chL[1])) {
+	// 			return this.setButton('last', this.chL[0]);
+	// 		}
+	// 		try{
+	// 			if(+read[0] > +this.chL[0]) {
+	// 			let slug = "{{ slug }}";
+	// 			let source = "{{ reader_modifier }}".split("/")[1];
+	// 				globalHistoryHandler.removeChapter(slug, source, read[0]);
+	// 				return this.setButton('last', this.chL[0]);
+	// 			}
+	// 		}catch(e) {}
+	// 	var streak = 0;
+	// 	var index = 0;
+	// 		for(var i=0; i < read.length; i++) {
+	// 		var oldIndex = index;
+	// 			index = this.chL.indexOf(read[i]);
+	// 			if(Math.abs(oldIndex - index) > 1 || index < 0) {
+	// 				streak = 0;
+	// 			}else{
+	// 				streak++;
+	// 				if(streak >= 3) {
+	// 					return this.setButton('continue', this.chL[index-streak-1]);
+	// 				}
+	// 			}
+	// 		}
+	// 		if(read[0] == this.chL[0] || (this.chL[1] && read[0] == this.chL[1])) {
+	// 			return this.setButton('last', this.chL[0]);
+	// 		}
+	// 		return this.setButton('continue', this.chL[Math.max(0,this.chL.indexOf(read[0]) - 1)]);
+	// 	}
 
-		this.handleReads = (read) => {
-			if(!read || read.length < 1) {
-				return this.setButton('start', this.chL[this.chL.length - 1]);
-			}
-			read = read.sort((a,b) => b - a);
-			if(read[0] == this.chL[0] || (this.chL[1] && read[0] == this.chL[1])) {
-				return this.setButton('last', this.chL[0]);
-			}
-			try{
-				if(+read[0] > +this.chL[0]) {
-				let slug = "{{ slug }}";
-				let source = "{{ reader_modifier }}".split("/")[1];
-					globalHistoryHandler.removeChapter(slug, source, read[0]);
-					return this.setButton('last', this.chL[0]);
-				}
-			}catch(e) {}
-		var streak = 0;
-		var index = 0;
-			for(var i=0; i < read.length; i++) {
-			var oldIndex = index;
-				index = this.chL.indexOf(read[i]);
-				if(Math.abs(oldIndex - index) > 1 || index < 0) {
-					streak = 0;
-				}else{
-					streak++;
-					if(streak >= 3) {
-						return this.setButton('continue', this.chL[index-streak-1]);
-					}
-				}
-			}
-			if(read[0] == this.chL[0] || (this.chL[1] && read[0] == this.chL[1])) {
-				return this.setButton('last', this.chL[0]);
-			}
-			return this.setButton('continue', this.chL[Math.max(0,this.chL.indexOf(read[0]) - 1)]);
-		}
+	// 	this.setButton = (mode, chapter) => {
+	// 		if(chapter === undefined) {
+	// 			chapter = chapterList.map(ch => ch[0]).sort((a,b) => b - a)[0];
+	// 			mode = 'last';
+	// 		}
+	// 		switch(mode) {
+	// 			case 'start':
+	// 				this.$.classList.add('no-chapter');
+	// 				this.$.querySelector('.manga-link-text').innerHTML = 'Start reading ›';
+	// 				break;
+	// 			case 'continue':
+	// 				this.$.classList.remove('no-chapter');
+	// 				this.$.querySelector('.manga-link-chap').innerHTML = chapter;
+	// 				this.$.querySelector('.manga-link-text').innerHTML = 'Continue reading ›';
+	// 				break;
+	// 			case 'last':
+	// 				this.$.classList.add('no-chapter');
+	// 				this.$.querySelector('.manga-link-text').innerHTML = 'Read the latest chapter ›';
+	// 				break;
+	// 		}
+	// 		this.$.href = `./${chapter.replace('.','-')}/1/`
+	// 	}
 
-		this.setButton = (mode, chapter) => {
-			if(chapter === undefined) {
-				chapter = chapterList.map(ch => ch[0]).sort((a,b) => b - a)[0];
-				mode = 'last';
-			}
-			switch(mode) {
-				case 'start':
-					this.$.classList.add('no-chapter');
-					this.$.querySelector('.manga-link-text').innerHTML = 'Start reading ›';
-					break;
-				case 'continue':
-					this.$.classList.remove('no-chapter');
-					this.$.querySelector('.manga-link-chap').innerHTML = chapter;
-					this.$.querySelector('.manga-link-text').innerHTML = 'Continue reading ›';
-					break;
-				case 'last':
-					this.$.classList.add('no-chapter');
-					this.$.querySelector('.manga-link-text').innerHTML = 'Read the latest chapter ›';
-					break;
-			}
-			this.$.href = `./${chapter.replace('.','-')}/1/`
-		}
-
-		this.$ = document.createElement('div');
-		this.$.innerHTML = this.html;
-		this.$ = this.$.children[0];
-		this.$._struct = this;
-		this.draw();
-		return this.$;
-	}
+	// 	this.$ = document.createElement('div');
+	// 	this.$.innerHTML = this.html;
+	// 	this.$ = this.$.children[0];
+	// 	this.$._struct = this;
+	// 	this.draw();
+	// 	return this.$;
+	// }
 
 	function prettifyLastUpdatedTable() {
 		chapterList = {{ chapter_list | safe }};
@@ -420,66 +363,11 @@ var reading_button = null;
 		</div>
 	</div>
 </div>
-{% if "admin" in available_features %}
-<div class="modal" id="uploadModal">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 id="formVal1" class="modal-title">Upload New Chapter</h4>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-			</div>
-			<form id="newChapterForm">
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-5">
-							<label for="chapterNumber" >Chapter Number</label>
-							<input required type="number" step="1.0" class="form-control-sm col-6" name="chapterNumber" id="chapterNumber" value="{{ chapter_list.0.0|add:'1' }}">
-						</div>
-						<div class="col-3">
-							<label for="volumeNumber" >Volume</label>
-							{% if  chapter_list|length == 0 or chapter_list.0.6 == "null" %}
-							<input required type="number" step="1.0" class="form-control-sm col-8" name="volumeNumber" id="volumeNumber" value="1">
-							{% else %}
-							<input required type="number" step="1.0" class="form-control-sm col-8" name="volumeNumber" id="volumeNumber" value="{{ chapter_list.0.6 }}">
-							{% endif %}
-						</div>
-					</div>
-					<div class="row mt-4">
-						<div class="col-7">
-							<label for="scanGroup" >Group</label>
-							<div class="input-group">
-								<select required class="form-control-sm" name="scanGroup" id="scanGroup">
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="row mt-4">
-						<div class="col-12">
-							<label for="chapterTitle" class="d-block" >Chapter Title</label>
-							<input required type="text" class="form-control-sm col-12" name="chapterTitle" id="chapterNumber">
-						</div>
-					</div>
-					<div class="row mt-4">
-						<div class="col">
-							<label for="chapterPages">Chapter Pages (as .zip)</label>
-							<input required type="file" accept=".zip" name="chapterPages" class="form-control-file" id="chapterPages">
-						</div>
-					</div>
-					<input type="hidden" name="slug" value="{{ slug }}">
-				</div>
-				<div id="modalSubmit" class="modal-footer">
-					<button type="button" id="submitForm" class="btn btn-primary">Upload Chapter</button>
-					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-{% endif %}
+
 <div class="container-fluid page-series">
 	<div class="bs-docs-section clearfix mt-1">
 		<div class="row justify-content-center">
-			<div class="col-lg-2 col-md-3 col-sm-11 col-xs-12 mb-4 side-cover">
+			<!-- <div class="col-lg-2 col-md-3 col-sm-11 col-xs-12 mb-4 side-cover">
 				<div class="list-item">
 					<div class="list-content">
 						<div class="list-body d-flex justify-content-center">
@@ -511,9 +399,9 @@ var reading_button = null;
 						</table>
 					</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="col-lg-8 col-md-7 col-sm-11 col-xs-12 series-content">
-				<article>
+			<!-- 	<article>
 					<picture>
 						<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="img-fluid"
 							alt="{{ series }} manga" />
@@ -542,7 +430,7 @@ var reading_button = null;
 					<a href="{{ original_url }}">View Original</a>
 					{% endif %}
 					{{ synopsis|safe|linebreaks }}
-				</article>
+				</article> -->
 				<div class="btn-group" role="group">
 					{% if "detailed" in available_features %}
 					<button type="button" id="detailedMode" class="tag-display-mode-toggle btn"
@@ -563,11 +451,8 @@ var reading_button = null;
 					</button>
 					{% endif %}
 					{% if "rss" in available_features %}
-					<a href="http://{{ root_domain }}/read/other/rss/{{ slug }}" target="_blank"><i
+					<a href="http://{{ root_domain }}/reader/other/rss/all" target="_blank"><i
 							class="fa fa-rss"></i></a>
-					{% endif %}
-					{% if "admin" in available_features %}
-					<a href="#" onclick="loadGroups('{{ slug }}')" data-toggle="modal" data-target="#uploadModal"><i class="float-right fa fa-upload fa-lg" ></i></a>
 					{% endif %}
 				</div>
 				{% if "compact" in available_features %}
@@ -599,7 +484,8 @@ var reading_button = null;
 					<table id="chapters" class="table table-hover">
 						<thead>
 							<tr>
-								<th scope="col" class="read-icon" onclick="markAll(this)"></th>
+								<th scope="col" style="text-align: center; position: relative;"  ><i class="fa fa-eye"></i></th>
+								<th scope="col">Series</th>
 								<th scope="col">
 									Title&nbsp;&nbsp;&nbsp;&nbsp;<input class="form-control-sm" id="chapterTitleSearch"
 										type="text" placeholder="⌕ Search" />
@@ -614,11 +500,14 @@ var reading_button = null;
 							</tr>
 						</thead>
 						<tbody id="chapterTable">
-							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume in chapter_list %}
-							<tr class="table-default" data-chapter="{{ chapter }}">
-								<td scope="row" class="read-icon" onclick="updateRead('{{ chapter }}')"></td>
+							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, serie_name, serie_slug in chapter_list %}
+							<tr class="table-default" data-serie="{{ serie_slug }}" data-chapter="{{ chapter }}">
+								<td scope="row" class="read-icon" onclick="updateRead('{{ serie_slug }}', '{{ chapter }}')"></td>
 								<td scope="row" class="chapter-title">
-									<a href="/{{ reader_modifier }}/{{ slug }}/{{ ch_slug }}/1/">
+									<a href="/{{ reader_modifier }}/{{ serie_slug }}">{{ serie_name }}</a>
+								</td>
+								<td scope="row" class="chapter-title">
+									<a href="/{{ reader_modifier }}/{{ serie_slug }}/{{ ch_slug }}/1/">
 										{% if chapter_list_value %}
 										{{ chapter_list_value }}
 										{% endif %}
@@ -634,7 +523,7 @@ var reading_button = null;
 								<td scope="row" class="detailed-chapter-download-chapter">
 									<a class="text-muted" data-toggle="tooltip" data-placement="top"
 										title="Download this chapter"
-										href="/api/download_chapter/{{ slug }}/{{ ch_slug }}/"><i class="fa fa-download"></i>
+										href="/api/download_chapter/{{ serie_slug }}/{{ ch_slug }}/"><i class="fa fa-download"></i>
 									</a>
 								</td>
 								{% endif %}
@@ -652,7 +541,20 @@ var reading_button = null;
 	</div>
 </div>
 <script>
-	// History tagging
-	tag();
+	remoteStorage.on("ready", async () => {
+	  {% if reader_modifier %}
+      let source = "{{ reader_modifier }}".split("/")[1];
+      {% else %}
+      let source = window.location.pathname
+        .split("/")
+        .filter(e => e)[1]
+        .replace("_", " ");
+      {% endif %}
+
+	 {% for series_slug, url, title in unique_series %}
+      await globalHistoryHandler.pushSeries("{{ series_slug }}", "", source, "{{ url }}", "{{ title }}");
+	 {% endfor %}
+      window.dispatchEvent(new CustomEvent("history-ready"));
+    });
 </script>
 {% endblock %}

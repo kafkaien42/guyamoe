@@ -1544,10 +1544,8 @@ function UI_Reader(o) {
 	this.copyShortLink = function() { 
 		// TODO: hard-coded values is meh
 		let url = document.location.href + document.location.hash;
-	var chapter = '' + (this.SCP.chapterObject.notice? +this.SCP.chapter-1 : this.SCP.chapter);
-		if (document.location.pathname.includes("Kaguya-Wants-To-Be-Confessed-To/")) {
-			url = document.location.origin + '/' + chapter.replace('.', '-') + '/'+ (this.SCP.page+1) + document.location.hash;
-		}
+		var chapter = '' + (this.SCP.chapterObject.notice? +this.SCP.chapter-1 : this.SCP.chapter);
+
 		navigator.clipboard.writeText(url)
 		.then(function() {
 		  Tooltippy.set('Link copied to clipboard!');
@@ -1662,13 +1660,6 @@ function UI_Reader(o) {
 	}
 
 	this.shuffleRandomChapter = function() {
-		if(this.SCP.chapter == '46.5' && this.SCP.series == 'Kaguya-Wants-To-Be-Confessed-To') {
-			this._.random_chapter.classList.remove('is-hidden');
-		} else {
-			this._.random_chapter.classList.add('is-hidden');
-			return;
-		}
-
 		if(!this.current.chapters[this.SCP.chapter].previewsBackup)
 			this.current.chapters[this.SCP.chapter].previewsBackup = this.current.chapters[this.SCP.chapter].previews[this.SCP.group].slice();
 		var previews = this.current.chapters[this.SCP.chapter].previewsBackup;
@@ -1684,9 +1675,9 @@ function UI_Reader(o) {
 			}
 			return array;
 		}
-	var subarr = previews.slice(4,16);
+		var subarr = previews.slice(4,16);
 		subarr.unshift(subarr.pop());
-	var uarr = [];
+		var uarr = [];
 		for(var i=0; i<subarr.length; i=i+2) {
 			uarr.push([subarr[i], subarr[i+1]])
 			shuffle(uarr[uarr.length-1]);

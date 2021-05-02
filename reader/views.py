@@ -114,6 +114,15 @@ def series_page_data(series_slug):
                 [key, sorted(value, key=lambda x: float(x[0]), reverse=True)]
             )
         chapter_list.sort(key=lambda x: float(x[0]), reverse=True)
+        available_features = [
+                "detailed",
+                "rss",
+                "download",
+            ]
+        if len(volume_list) > 1:
+            available_features += ["volumeCovers"]
+        if len(chapter_list) > 5:
+            available_features += ["compact"]
         series_page_dt = {
             "series": series.name,
             "alt_titles": series.alternative_titles.split(", ")
@@ -141,13 +150,7 @@ def series_page_data(series_slug):
             "volume_list": sorted(volume_list, key=lambda m: m[0], reverse=True),
             "root_domain": settings.CANONICAL_ROOT_DOMAIN,
             "relative_url": f"read/manga/{series.slug}/",
-            "available_features": [
-                "detailed",
-                "compact",
-                "volumeCovers",
-                "rss",
-                "download",
-            ],
+            "available_features": available_features,
             "reader_modifier": "read/manga",
         }
         cache.set(f"series_page_dt_{series_slug}", series_page_dt, 3600 * 12)

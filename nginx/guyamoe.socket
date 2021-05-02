@@ -2,8 +2,8 @@
 Description=Socket for guya.moe
 
 [Socket]
-ListenStream=/home/milleniumbug/mahoushoujobu/app/nginx/socket/guya.sock
-SocketUser=milleniumbug
+ListenStream=/home/ubuntu/guyamoe/nginx/socket/guya.sock
+SocketUser=ubuntu
 SocketGroup=www-data
 SocketMode=0660
 

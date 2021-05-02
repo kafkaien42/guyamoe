@@ -5,7 +5,7 @@ from django.urls import include, path, re_path
 from . import views
 
 urlpatterns = [
-    path("", views.home, name="site-home"),
+    path("", views.all_chapters, name="site-home"),
     path("admin_home/", views.admin_home, name="admin_home"),
     path("about/", views.about, name="site-about"),
     re_path(
@@ -18,6 +18,6 @@ urlpatterns = [
         views.main_series_page,
         name="site-main-series-page",
     ),
-    path("latest/", views.latest, name="site-main-series-latest"),
+    # path("latest/", views.latest, name="site-main-series-latest"),
     path("random/", views.random, name="site-main-series-random"),
 ]

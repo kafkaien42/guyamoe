@@ -1,43 +1,45 @@
 upstream guyamoe {
-    server unix:///home/milleniumbug/mahoushoujobu/app/nginx/socket/guya.sock; # for a file socket
+    server unix:///home/ubuntu/guyamoe/nginx/socket/guya.sock; # for a file socket
 }
+
+#server {
+#	listen 80;
+#	listen [::]:80;
+#	server_name 51.222.170.214 ;
+#	return 301 https://51.222.170.214$request_uri;
+#	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+#}
+#
+#	ssl_certificate /etc/letsencrypt/live/mahoushoujobu.com/fullchain.pem;
+#	ssl_certificate_key /etc/letsencrypt/live/mahoushoujobu.com/privkey.pem;
+#
 
 server {
 	listen 80;
 	listen [::]:80;
-	server_name mahoushoujobu.com;
-	return 301 https://mahoushoujobu.com$request_uri;
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-}
 
-server {
-	listen 443 ssl;
-	listen [::]:443 ssl;
+ 	server_name 51.222.170.214 ;
 
-        server_name mahoushoujobu.com;
-
-	ssl_certificate /etc/letsencrypt/live/mahoushoujobu.com/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/mahoushoujobu.com/privkey.pem;
 
 	client_max_body_size 25M;
 
 	location /media {
-		alias /home/milleniumbug/mahoushoujobu/app/media;
+		alias /home/ubuntu/guyamoe/media;
 	}
 
 	location ~ ^/static/(.*) {
-		root /home/milleniumbug/mahoushoujobu/app;
-		try_files /static_global/$1 /homepage/static/$1 /reader/static/$1 @process_in_app;
+		root /home/ubuntu/guyamoe;
+		try_files /static_global/$1 /homepage/static/$1 /reader/static/$1 /static/$1  @process_in_app;
 	}
 
 	location / {
 		uwsgi_pass guyamoe;
-		include /home/milleniumbug/mahoushoujobu/app/nginx/uwsgi_params;
+		include /home/ubuntu/guyamoe/nginx/uwsgi_params;
 	}
 
 	location @process_in_app {
 		uwsgi_pass guyamoe;
-		include /home/milleniumbug/mahoushoujobu/app/nginx/uwsgi_params;
+		include /home/ubuntu/guyamoe/nginx/uwsgi_params;
 	}
 }
 

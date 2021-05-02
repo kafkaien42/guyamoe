@@ -45,14 +45,14 @@ sed -i "s|\"o kawaii koto\"|\"$(openssl rand -base64 32)\"|" guyamoe/settings/ba
 mkdir misc/migrations && touch misc/migrations/__init__.py
 ```
 
-7. Generate the default assets for Guyamoe.
-```
-python3 init.py
-```
-
-8. Create an admin user for Guyamoe.
+7. Create an admin user for Guyamoe.
 ```
 python3 manage.py createsuperuser
+```
+
+8. Collect static files. Otherwise the admin static files won't be accessible.
+```
+python3 manage.py collectstatic
 ```
 
 Before starting the server, create a `media` folder in the base directory. Add manga with the corresponding chapters and page images. Structure it like so:
@@ -60,10 +60,11 @@ Before starting the server, create a `media` folder in the base directory. Add m
 media
 └───manga
     └───<series-slug-name>
-        └───001
-            ├───001.jpg
-            ├───002.jpg
-            └───...
+        └───chapters
+        	└───001
+            	├───001.jpg
+            	├───002.jpg
+           		└───...
 ```
 E.g. `Kaguya-Wants-To-Be-Confessed-To` for `<series-slug-name>`. 
 
