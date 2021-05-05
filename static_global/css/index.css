@@ -75,7 +75,7 @@ header {
 }
 
 .navbar-brand-logo img {
-	max-height: 2.3rem;
+	max-height: 4.3rem;
 	max-width: 100%;
 }
 
@@ -132,7 +132,7 @@ header {
 	.navbar-brand-logo {
 		width: auto;
 		margin: 0 auto !important;
-		padding-left: 4rem !important;
+		padding-left: 2rem !important;
 	}
 
 	.navbar-toggler {
@@ -408,7 +408,7 @@ header {
 }
 
 .home .navbar-brand-logo img {
-	max-height: 2.7rem;
+	max-height: 4.3rem;
 }
 
 .home .navbar-collapse {

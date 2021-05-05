@@ -6,8 +6,14 @@
 <meta name="description" content="Read {{ series }} manga series by {{ author }}.{{ alt_titles_str|safe }}" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Read {{ series }} | {{ brand.name }}" />
+
+{% if cover_vol_url %}
+<meta name="twitter:image" content="{{ uri_scheme }}://{{ root_domain }}{{ cover_vol_url }}" />
+<meta property="og:image" content="{{ uri_scheme }}://{{ root_domain }}{{ cover_vol_url }}" />
+{% else %}
 <meta name="twitter:image" content="{{ brand.image_url }}" />
 <meta property="og:image" content="{{ brand.image_url }}" />
+{% endif %}
 <meta name="author" content="{{ author }}" />
 {% endblock %}
 

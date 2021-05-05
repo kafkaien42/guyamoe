@@ -18,7 +18,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 PARENT_DIR = BASE_DIR.parent
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "o kawaii koto")
+SECRET_KEY = os.environ.get("SECRET_KEY", "/bB/PiOBQ+4sm9nugkW5Oj5e9JvRKNPRIfNt1P6XSm0=")
 
 CANONICAL_ROOT_DOMAIN = "localhost:8000"
 
@@ -154,12 +154,12 @@ IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID", "")
 MAIL_DISCORD_WEBHOOK_ID = int(os.environ.get("MAIL_DISCORD_WEBHOOK_ID", 1))
 MAIL_DISCORD_WEBHOOK_TOKEN = os.environ.get("MAIL_DISCORD_WEBHOOK_TOKEN", "")
 
-BRANDING_NAME = "mahoushoujo.bu"
-BRANDING_DESCRIPTION = ""
-BRANDING_IMAGE_URL = "https://mahoushoujobu.com/static/img/mt-cover.png"
+BRANDING_NAME = "Danke für Lesen"
+BRANDING_DESCRIPTION = "Thank you for reading! A circle that works on random twitter and pixiv one-shots and the occasional cute manga."
+BRANDING_IMAGE_URL = "https://danke.moe/static/img/tumbnail.png"
 
-HOME_BRANDING_NAME = "Home for scanlations of Magical Trans! and Bro Girl | mahoushoujobu.com"
-HOME_BRANDING_DESCRIPTION = "Read Magical Trans! and Bro Girl."
-HOME_BRANDING_IMAGE_URL = "https://mahoushoujobu.com/static/img/mt-cover.png"
+HOME_BRANDING_NAME = "Home for scanlations of Danke für Lesen"
+HOME_BRANDING_DESCRIPTION = "Read our latest chapters here."
+HOME_BRANDING_IMAGE_URL = "https://danke.moe/static/img/tumbnail.png"
 
 IMAGE_PROXY_URL = "https://proxy.f-ck.me"

@@ -1,6 +1,7 @@
 import json
 from collections import OrderedDict, defaultdict
 from datetime import datetime
+import os
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -175,32 +176,55 @@ def series_info_admin(request, series_slug):
     return render(request, "reader/series.html", data)
 
 
-def get_all_metadata(series_slug):
-    series_metadata = cache.get(f"series_metadata_{series_slug}")
+def get_all_metadata(series_slug, slug_chapter_number):
+    series_metadata = cache.get(f"series_metadata_{series_slug}_{slug_chapter_number}")
     if not series_metadata:
         series = Series.objects.filter(slug=series_slug).first()
         if not series:
             return None
-        chapters = Chapter.objects.filter(series=series).select_related("series")
+        chapters = Chapter.objects.filter(series=series).select_related("series", "group")
         series_metadata = {}
         series_metadata["indexed"] = series.indexed
         for chapter in chapters:
+            if chapter.slug_chapter_number() != slug_chapter_number:
+                continue
+
+            chapter_folder_path = os.path.join(
+                "manga", series_slug, "chapters", chapter.folder, str(chapter.group.id)
+            )
+            # Use this if our png are not optimized enough and it is eating up our bandwidth
+            # chapter_folder_path = os.path.join(
+            #     "manga", series_slug, "chapters", chapter.folder, str(chapter.group.id) + "_shrunk"
+            # )
+
+
+            query_string = "" if not chapter.version else f"?v{chapter.version}"
+            filenames = sorted(
+                [
+                    u + query_string
+                    for u in os.listdir(
+                        os.path.join(settings.MEDIA_ROOT, chapter_folder_path)
+                    )
+                ]
+            )
+            first_page_url = settings.MEDIA_URL + os.path.join(chapter_folder_path, filenames[0])
+
             series_metadata[chapter.slug_chapter_number()] = {
                 "series_name": chapter.series.name,
                 "slug": chapter.series.slug,
                 "author_name": series.author.name,
                 "chapter_number": chapter.clean_chapter_number(),
                 "chapter_title": chapter.title,
+                "first_page_url": first_page_url
             }
-        cache.set(f"series_metadata_{series_slug}", series_metadata, 3600 * 12)
+        cache.set(f"series_metadata_{series_slug}_{slug_chapter_number}", series_metadata, 3600 * 12)
     return series_metadata
-
 
 @cache_control(public=True, max_age=30, s_maxage=30)
 @decorator_from_middleware(OnlineNowMiddleware)
 def reader(request, series_slug, chapter, page=None):
     if page:
-        data = get_all_metadata(series_slug)
+        data = get_all_metadata(series_slug, chapter)
         if data and chapter in data:
             data[chapter]["relative_url"] = f"read/manga/{series_slug}/{chapter}/1"
             data[chapter]["api_path"] = f"/api/series/"

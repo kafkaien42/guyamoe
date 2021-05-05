@@ -1660,6 +1660,9 @@ function UI_Reader(o) {
 	}
 
 	this.shuffleRandomChapter = function() {
+		this._.random_chapter.classList.add('is-hidden');
+        return;
+
 		if(!this.current.chapters[this.SCP.chapter].previewsBackup)
 			this.current.chapters[this.SCP.chapter].previewsBackup = this.current.chapters[this.SCP.chapter].previews[this.SCP.group].slice();
 		var previews = this.current.chapters[this.SCP.chapter].previewsBackup;
