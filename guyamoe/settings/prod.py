@@ -63,12 +63,15 @@ LOGGING = {
     },
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "unique-snowflake",
-    }
-}
+
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache",}}
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+#         "LOCATION": "unique-snowflake",
+#     }
+# }
 # CACHES = {
 #     "default": {
 #         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",

@@ -125,7 +125,7 @@ def all_groups():
     groups_data = cache.get("all_groups_data")
     if not groups_data:
         groups_data = {str(group.id): group.name for group in Group.objects.all()}
-        cache.set("all_groups_data", groups_data, 600)
+        cache.set("all_groups_data", groups_data, 12 * 3600)
     return groups_data
 
 

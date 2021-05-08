@@ -41,7 +41,10 @@ admin.site.register(Group, GroupAdmin)
 
 class SeriesAdmin(admin.ModelAdmin):
     form = SeriesForm
-    list_display = ("name",)
+    list_display = ("name" ,) # , "latest_chapter"
+
+# def latest_chapter(self, obj):
+
 
 
 admin.site.register(Series, SeriesAdmin)

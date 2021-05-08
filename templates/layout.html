@@ -22,6 +22,7 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="theme-color" content="#2b2f33" />
 	<meta name="format-detection" content="telephone=no">
+	<meta name="google-site-verification" content="QpnvbBE-TzYhqCCgViBhlBR2cGl7HXNUpN2Yu67a8z8" />
   {% block meta %}
   {% if page_title %}
   <title>{{ page_title }} | {{ brand.name }}</title>
@@ -64,12 +65,17 @@
 				<div class="collapse navbar-collapse col-lg-8" id="navbarSupportedContent">
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<a class="nav-link" href="/" id="readManga">
+							<a class="nav-link" href="/" id="chaptersManga">
 							Latest Chapters
 							</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/series/" id="seriesManga">
+							Series
+							</a>
+						</li>
 						<li class="nav-item ">
-							<a class="nav-link" href="/random" id="randomManga">
+							<a class="nav-link" href="/random/" id="randomManga">
 							Random Chapter
 							</a>
 						</li>
@@ -103,12 +109,14 @@
 				else
 					return;
 				for (var i = 0; i < items.length; i++) {
-					if (document.location.href.indexOf(items[i].href) > -1) {
+					if (document.location.pathname === items[i].pathname) {
 						link.classList.add('s')
 					}
 				}
 			} else {
-				if (document.location.href.indexOf(link.href) > -1)
+
+				if (document.location.pathname === link.pathname)
+				// if (document.location.href.indexOf(link.href) > -1)
 					link.classList.add('s')
 			}
 		});

@@ -70,6 +70,8 @@ class Series(models.Model):
 
     class Meta:
         ordering = ("name",)
+        verbose_name_plural = "series"
+
 
 
 def path_file_name(instance, filename):

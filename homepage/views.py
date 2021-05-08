@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.decorators import decorator_from_middleware
 from django.views.decorators.cache import cache_control
+from django.db.models import Min, F, Max
 
 from homepage.middleware import ForwardParametersMiddleware
 from reader.middleware import OnlineNowMiddleware
@@ -33,9 +34,9 @@ def admin_home(request):
     )
 
 cache_control(public=True, max_age=60, s_maxage=60)
-def series_data():
-    series_page_dt = cache.get(f"series_page_dt")
-    if not series_page_dt:
+def chapters_data():
+    chapters_page_dt = cache.get(f"chapters_page_dt")
+    if not chapters_page_dt:
         # series = get_object_or_404(Series)
         chapters = Chapter.objects.order_by("-uploaded_on").select_related(
             "series", "group"
@@ -70,7 +71,7 @@ def series_data():
         unique_series = []
         for series in seriess:
             unique_series.append([series.slug, f"read/manga/{series.slug}/", series.name])
-        series_page_dt = {
+        chapters_page_dt = {
             "metadata": [
                 [
                     "Last Updated",
@@ -87,6 +88,49 @@ def series_data():
             ],
             "reader_modifier": "read/manga",
         }
+        cache.set(f"chapters_page_dt", chapters_page_dt, 3600 * 12)
+    return chapters_page_dt
+
+
+cache_control(public=True, max_age=60, s_maxage=60)
+def series_data():
+    series_page_dt = cache.get(f"series_page_dt")
+    if not series_page_dt:
+        # series = get_object_or_404(Series)
+        # volumes = Volume.objects.select_related(
+        #     "series"
+        # ).values('series').annotate(Min('volume_number'))
+
+        # min_vol = Volume.objects.order_by('series').values('series').annotate(Min('volume_number'))
+        # volumes = Volume.objects.select_related("series").filter(volume_number__in=min_vol.values_list('volume_number__min', flat=True))
+        series_latest_uploaded = Chapter.objects.order_by('series').values('series').annotate(Max('uploaded_on'))
+        latest_chapters = Chapter.objects.select_related("series").filter(uploaded_on__in=series_latest_uploaded.values_list('uploaded_on__max', flat=True)).order_by("-uploaded_on")
+
+        series_list = []
+        for chapter in latest_chapters:
+            # For some stupid reason, there is no relationship between chapters and volumes
+            volume = Volume.objects.filter(volume_number=chapter.volume, series=chapter.series).first()
+            if not volume:
+                print("Cannot find volume for chapter", chapter)
+                continue
+            series_list.append({
+                "name": chapter.series.name,
+                "slug": chapter.series.slug,
+                "series_url": f"/read/manga/{chapter.series.slug}/",
+                "metadata" : [
+                    f"Last Updated Ch. {chapter.clean_chapter_number()} - {datetime.utcfromtimestamp(chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d')}"
+                    ],
+                "volume_cover": f"/media/{volume.volume_cover}",
+                "volume_cover_webp": f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp",
+                })
+        series_page_dt = {
+            "series_list": series_list,
+            "root_domain": settings.CANONICAL_ROOT_DOMAIN,
+            "available_features": [
+                "volumeCovers",
+            ],
+            # "reader_modifier": "read/manga",
+        }
         cache.set(f"series_page_dt", series_page_dt, 3600 * 12)
     return series_page_dt
 
@@ -94,9 +138,17 @@ def series_data():
 cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def all_chapters(request):
-    data = series_data()
+    data = chapters_data()
     data["version_query"] = settings.STATIC_VERSION
     return render(request, "homepage/show_chapters.html", data)
+
+
+cache_control(public=True, max_age=300, s_maxage=300)
+@decorator_from_middleware(OnlineNowMiddleware)
+def all_series(request):
+    data = series_data()
+    data["version_query"] = settings.STATIC_VERSION
+    return render(request, "homepage/show_series.html", data)
 
 
 @cache_control(public=True, max_age=3600, s_maxage=300)

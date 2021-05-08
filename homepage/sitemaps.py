@@ -11,7 +11,7 @@ class StaticViewSitemap(Sitemap):
     protocol = "https"
 
     def items(self):
-        return ["site-home", "site-about"]
+        return ["site-home", "site-series", "site-about"]
 
     def location(self, item):
         return reverse(item)
@@ -43,7 +43,8 @@ class PagesListViewSitemap(Sitemap):
     protocol = "https"
 
     def items(self):
-        return [Page.objects.all()[0]]
+        pages = Page.objects.all()
+        return [pages[0]] if len(pages) > 0 else []
 
     def location(self, item):
         return "/pages"

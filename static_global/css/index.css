@@ -1809,3 +1809,33 @@ main a {
     color: white;
     border-radius: 6px;
 }
+
+.gallery-caption .text-muted:hover
+{
+	text-decoration: none;
+}
+
+.gallery-image {
+ border-top-left-radius:.3em;
+ border-top-right-radius:.3em;
+}
+
+.gallery-caption {
+ /*line-height:15px;*/
+ left:0;
+ right:0;
+ top:100%;
+ z-index:10;
+ overflow:hidden;
+ width:100%;
+ /*max-height:34px;*/
+ padding:3px;
+ background-color:#3A3F44;
+ font-weight:700;
+ display:block;
+ text-align:center;
+ text-decoration:none;
+ /*color:#34495e;*/
+ border-bottom-left-radius:.3em;
+ border-bottom-right-radius:.3em
+}
