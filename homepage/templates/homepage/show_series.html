@@ -526,7 +526,9 @@ var reading_button = null;
 					{% for s in series_list %}
 					<div class="mb-1">
 						<a  href="{{ s.series_url }}" >
-							<img class="gallery-image" src="{{ s.volume_cover_webp }}" alt="Cover for {{ s.name }}" onerror='if (this.src != "{{ s.volume_cover }}") this.src="{{ s.volume_cover }}"'>
+							{% if s.has_cover %}
+							<img class="gallery-image" src="{{ s.volume_cover_webp }}" alt="Cover for {{ s.name }}" onerror='this.onerror=null; this.src="{{ s.volume_cover }}"'>
+							{% endif %}
 							<div class="gallery-caption">
 								{% for value in s.metadata %}
 									<p class="text-center small text-muted mb-1">{{ value }}</p>

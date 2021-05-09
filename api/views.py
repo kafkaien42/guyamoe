@@ -154,6 +154,27 @@ def download_chapter(request, series_slug, chapter):
     return resp
 
 
+def save_zip_file(input_zip_file, chapter_folder, group_folder):
+    with zipfile.ZipFile(input_zip_file) as zip_file:
+        zipped_pages = zip_file.namelist()
+        if all(
+            [x.split(" ", 1)[0].split(".", 1)[0].isdigit() for x in zipped_pages]
+        ):
+            all_pages = sorted(
+                zipped_pages, key=lambda x: int(x.split(" ", 1)[0].split(".", 1)[0])
+            )
+        else:
+            all_pages = sorted(zipped_pages)
+        padding = len(str(len(all_pages)))
+        for idx, page in enumerate(all_pages):
+            extension = page.rsplit(".", 1)[1]
+            page_file = f"{str(idx+1).zfill(padding)}.{extension}"
+            with open(
+                os.path.join(chapter_folder, group_folder, page_file), "wb"
+            ) as f:
+                f.write(zip_file.read(page))
+
+
 def upload_new_chapter(request, series_slug):
     if request.method == "POST" and request.user and request.user.is_staff:
         group = Group.objects.get(name=request.POST["scanGroup"])
@@ -164,24 +185,7 @@ def upload_new_chapter(request, series_slug):
         ch_obj, chapter_folder, group_folder, is_update = create_chapter_obj(
             chapter_number, group, series, volume, title
         )
-        with zipfile.ZipFile(request.FILES["chapterPages"]) as zip_file:
-            zipped_pages = zip_file.namelist()
-            if all(
-                [x.split(" ", 1)[0].split(".", 1)[0].isdigit() for x in zipped_pages]
-            ):
-                all_pages = sorted(
-                    zipped_pages, key=lambda x: int(x.split(" ", 1)[0].split(".", 1)[0])
-                )
-            else:
-                all_pages = sorted(zipped_pages)
-            padding = len(str(len(all_pages)))
-            for idx, page in enumerate(all_pages):
-                extension = page.rsplit(".", 1)[1]
-                page_file = f"{str(idx+1).zfill(padding)}.{extension}"
-                with open(
-                    os.path.join(chapter_folder, group_folder, page_file), "wb"
-                ) as f:
-                    f.write(zip_file.read(page))
+        save_zip_file(request.FILES["chapterPages"], chapter_folder, group_folder)
         chapter_post_process(ch_obj, is_update=is_update)
         return HttpResponse(
             json.dumps({"response": "success"}), content_type="application/json"

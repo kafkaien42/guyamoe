@@ -93,8 +93,8 @@ def chapters_data():
 
 
 cache_control(public=True, max_age=60, s_maxage=60)
-def series_data():
-    series_page_dt = cache.get(f"series_page_dt")
+def series_data(only_oneshots=False):
+    series_page_dt = cache.get(f"oneshots_page_dt" if only_oneshots else f"series_page_dt")
     if not series_page_dt:
         # series = get_object_or_404(Series)
         # volumes = Volume.objects.select_related(
@@ -113,6 +113,8 @@ def series_data():
             if not volume:
                 print("Cannot find volume for chapter", chapter)
                 continue
+            if only_oneshots and not chapter.series.is_oneshot:
+                continue
             series_list.append({
                 "name": chapter.series.name,
                 "slug": chapter.series.slug,
@@ -120,6 +122,7 @@ def series_data():
                 "metadata" : [
                     f"Last Updated Ch. {chapter.clean_chapter_number()} - {datetime.utcfromtimestamp(chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d')}"
                     ],
+                "has_cover": volume.volume_cover and volume.volume_cover != "",
                 "volume_cover": f"/media/{volume.volume_cover}",
                 "volume_cover_webp": f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp",
                 })
@@ -131,7 +134,7 @@ def series_data():
             ],
             # "reader_modifier": "read/manga",
         }
-        cache.set(f"series_page_dt", series_page_dt, 3600 * 12)
+        cache.set(f"oneshots_page_dt" if only_oneshots else f"series_page_dt", series_page_dt, 3600 * 12)
     return series_page_dt
 
 
@@ -147,6 +150,14 @@ cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def all_series(request):
     data = series_data()
+    data["version_query"] = settings.STATIC_VERSION
+    return render(request, "homepage/show_series.html", data)
+
+
+cache_control(public=True, max_age=300, s_maxage=300)
+@decorator_from_middleware(OnlineNowMiddleware)
+def all_oneshots(request):
+    data = series_data(only_oneshots=True)
     data["version_query"] = settings.STATIC_VERSION
     return render(request, "homepage/show_series.html", data)
 

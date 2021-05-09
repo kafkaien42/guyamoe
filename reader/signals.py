@@ -34,7 +34,7 @@ def delete_chapter_folder(sender, instance, **kwargs):
             instance.folder,
         )
         delete_chapter_pages_if_exists(
-            folder_path, instance.clean_chapter_number(), instance.group.id
+            folder_path, instance.clean_chapter_number(), str(instance.group.id)
         )
         if os.path.exists(folder_path) and not os.listdir(folder_path):
             shutil.rmtree(folder_path, ignore_errors=True)
@@ -44,6 +44,7 @@ def delete_chapter_folder(sender, instance, **kwargs):
         ).first()
         if hit_count_obj:
             hit_count_obj.delete()
+        clear_pages_cache()
 
 
 @receiver(post_delete, sender=Volume)

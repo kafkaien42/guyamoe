@@ -61,6 +61,7 @@ class Series(models.Model):
         max_length=2, choices=SCRAPING_SOURCES, default=MANGADEX
     )
     scraping_identifiers = models.TextField(blank=True, null=True)
+    is_oneshot = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -115,7 +116,7 @@ class Chapter(models.Model):
     )
     version = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     preferred_sort = models.CharField(max_length=200, blank=True, null=True)
-    scraper_hash = models.CharField(max_length=32, blank=True)
+    scraper_hash = models.CharField(max_length=36, blank=True)
 
     def clean_chapter_number(self):
         return (
@@ -155,7 +156,7 @@ class Chapter(models.Model):
         return f"{self.chapter_number} - {self.title} | {self.group}"
 
     def get_absolute_url(self):
-        return f"/read/manga/{self.series.slug}/{Chapter.slug_chapter_number(self)}/1"
+        return f"/read/manga/{self.series.slug}/{Chapter.slug_chapter_number(self)}/1/"
 
     class Meta:
         ordering = ("chapter_number",)
