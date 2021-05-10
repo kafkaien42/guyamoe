@@ -25,10 +25,12 @@ server {
 	client_max_body_size 25M;
 
 	location /media {
+		expires 7d;
 		alias /home/ubuntu/guyamoe/media;
 	}
 
 	location ~ ^/static/(.*) {
+		expires 7d;
 		root /home/ubuntu/guyamoe;
 		try_files /static_global/$1 /homepage/static/$1 /reader/static/$1 /static/$1  @process_in_app;
 	}

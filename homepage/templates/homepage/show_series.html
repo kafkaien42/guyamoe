@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block head %}
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js"></script>
 <script defer>
 var reading_button = null;
 
@@ -289,6 +290,10 @@ var reading_button = null;
 
 	window.addEventListener("DOMContentLoaded", () => {
 		listMode("volumeCovers");
+		const lazyContent = new LazyLoad({
+		  // use_native: true // <-- there you go
+		});
+		lazyContent.update();
 		// prettifyLastUpdatedTable();
 		// initSearchHandler();
 		// semaphore.loaded();
@@ -388,7 +393,7 @@ var reading_button = null;
 					</div>
 				</div>
 			</div> -->
-			<div class="col-lg-8 col-md-7 col-sm-11 col-xs-12 series-content">
+			<div class="col-lg-8 col-md-9 col-sm-11 col-xs-12 series-content">
 			<!-- 	<article>
 					<picture>
 						<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="img-fluid"
@@ -523,11 +528,17 @@ var reading_button = null;
 				{% endif %}
 				{% if "volumeCovers" in available_features %}
 				<div class="container-fluid" id="volumeCoversView">
+					<!-- onerror='this.onerror=null; this.src="{{ s.volume_cover }}"' -->
 					{% for s in series_list %}
 					<div class="mb-1">
 						<a  href="{{ s.series_url }}" >
 							{% if s.has_cover %}
+							{% if forloop.counter0 < 5 %}
 							<img class="gallery-image" src="{{ s.volume_cover_webp }}" alt="Cover for {{ s.name }}" onerror='this.onerror=null; this.src="{{ s.volume_cover }}"'>
+							{% else %}
+
+							<img class="gallery-image lazy" data-src="{{ s.volume_cover_webp }}" alt="Cover for {{ s.name }}" > 
+							{% endif %}
 							{% endif %}
 							<div class="gallery-caption">
 								{% for value in s.metadata %}

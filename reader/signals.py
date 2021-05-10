@@ -85,6 +85,7 @@ def save_volume(sender, instance, **kwargs):
     if instance.series:
         clear_pages_cache()
     if instance.volume_cover:
+        # Todo change the cover to a random number otherwise cache will die
         save_dir = os.path.join(os.path.dirname(str(instance.volume_cover)))
         vol_cover = os.path.basename(str(instance.volume_cover))
         for old_data in os.listdir(os.path.join(settings.MEDIA_ROOT, save_dir)):
@@ -94,6 +95,14 @@ def save_volume(sender, instance, **kwargs):
         image = Image.open(os.path.join(settings.MEDIA_ROOT, save_dir, vol_cover))
         image.save(
             os.path.join(settings.MEDIA_ROOT, save_dir, f"{filename}.webp"),
+            lossless=False,
+            quality=60,
+            method=6,
+        )
+        shrunk = image.convert("RGB")
+        shrunk.thumbnail((700, shrunk.height), Image.ANTIALIAS)
+        shrunk.save(
+            os.path.join(settings.MEDIA_ROOT, save_dir, f"{filename}_shrunk.webp"),
             lossless=False,
             quality=60,
             method=6,

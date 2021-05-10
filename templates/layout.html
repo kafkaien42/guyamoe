@@ -5,11 +5,13 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link defer rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<!-- 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
 	<link rel="stylesheet" href="{% static 'css/index.css' %}{{ version_query }}">
 	<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="{% static 'js/jquery.min.js' %}"></script>
 	<script src="{% static 'js/alg_lib.js' %}{{ version_query }}"></script>
-	<script defer src="{% static 'js/bootstrap.min.js' %}"></script>
+	<!-- <script defer src="{% static 'js/bootstrap.min.js' %}"></script> -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<link rel="canonical" href="{{ absolute_url }}" />
 	<link rel="manifest" href="{% static 'manifest.json' %}{{ version_query }}">
 	<link rel="shortcut icon" sizes="128x128" type="image/png" href="{% static 'logo-mt-squared-small.png' %}{{ version_query }}" defer />
@@ -57,7 +59,7 @@
 		<nav class="navbar navbar-expand-lg">
 			<div class="container-fluid">
 				<a class="navbar-brand-logo col-lg-2" href="/" rel="home">
-					<img src="{% static 'img/logo-mt.png' %}" alt="Guya.moe">
+					<img height="250" src="{% static 'img/logo-mt.png' %}" alt="Danke.moe">
 				</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -89,11 +91,11 @@
 							<a class="nav-link" href="/about/">About</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="https://twitter.com/DfLmanga"><img alt="Twitter" src="/static/img/twitter.svg"></img>
+							<a class="nav-link" href="https://twitter.com/DfLmanga"><img width="24" height="24" alt="Twitter" src="/static/img/twitter.svg"></img>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="https://discord.gg/zExT77hT6z"><img alt="Discord" src="/static/img/discord.svg"></img>
+							<a class="nav-link" href="https://discord.gg/zExT77hT6z"><img width="24" height="24" alt="Discord" src="/static/img/discord.svg"></img>
 							</a>
 						</li>
 						<li class="nav-item">

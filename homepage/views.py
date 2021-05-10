@@ -15,6 +15,7 @@ from homepage.middleware import ForwardParametersMiddleware
 from reader.middleware import OnlineNowMiddleware
 from reader.models import Chapter, Series, Volume
 from reader.views import series_page_data
+from itertools import repeat
 
 
 @staff_member_required
@@ -107,6 +108,7 @@ def series_data(only_oneshots=False):
         latest_chapters = Chapter.objects.select_related("series").filter(uploaded_on__in=series_latest_uploaded.values_list('uploaded_on__max', flat=True)).order_by("-uploaded_on")
 
         series_list = []
+        # i = 0
         for chapter in latest_chapters:
             # For some stupid reason, there is no relationship between chapters and volumes
             volume = Volume.objects.filter(volume_number=chapter.volume, series=chapter.series).first()
@@ -124,8 +126,16 @@ def series_data(only_oneshots=False):
                     ],
                 "has_cover": volume.volume_cover and volume.volume_cover != "",
                 "volume_cover": f"/media/{volume.volume_cover}",
-                "volume_cover_webp": f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp",
+                "volume_cover_webp": f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp", #?v={i}
                 })
+            # i +=1
+            # if i > 4:
+            #     break
+        # series_list2 = []
+        # for i, s in enumerate(series_list * 20):
+        #     p = s.copy()
+        #     p['volume_cover_webp'] += str(i)
+        #     series_list2.append(p)
         series_page_dt = {
             "series_list": series_list,
             "root_domain": settings.CANONICAL_ROOT_DOMAIN,
