@@ -4,12 +4,12 @@ from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.db.models.signals import post_delete, post_save, pre_save
+from django.db.models.signals import post_delete, post_save, pre_save, post_init
 from django.dispatch import receiver
 from PIL import Image, ImageFilter
 
 from api.api import clear_pages_cache, delete_chapter_pages_if_exists
-from reader.models import Chapter, HitCount, Series, Volume
+from reader.models import Chapter, HitCount, Series, Volume, new_volume_folder
 
 
 @receiver(post_delete, sender=Series)
@@ -73,18 +73,69 @@ def pre_save_chapter(sender, instance, **kwargs):
             ) + timedelta(days=7)
             instance.series.save()
 
+@receiver(post_init, sender=Chapter)
+def remember_original_serie_of_chapter(sender, instance, **kwargs):
+    instance.old_chapter_number = str(instance.slug_chapter_number()) if instance.chapter_number is not None else None
+    instance.old_series_slug = str(instance.series.slug) if hasattr(instance, 'series') else None
+    instance.old_group_id = str(instance.group.id) if hasattr(instance, 'group') else None
+
 
 @receiver(post_save, sender=Chapter)
 def post_save_chapter(sender, instance, **kwargs):
+    # If the group or series or the chapter number has changed, move all chapter file
+    if (instance.old_series_slug is not None and str(instance.series.slug) != instance.old_series_slug) or \
+       (instance.old_group_id is not None and str(instance.group.id) != instance.old_group_id) or \
+       (instance.old_chapter_number is not None and str(instance.slug_chapter_number()) != instance.old_chapter_number):
+
+        new_group_id = str(instance.group.id)
+
+        old_chapter_folder = os.path.join(settings.MEDIA_ROOT, "manga", instance.old_series_slug, "chapters", instance.folder, instance.old_group_id)
+        new_chapter_folder = os.path.join(settings.MEDIA_ROOT, "manga", instance.series.slug, "chapters", instance.folder, new_group_id)
+
+        os.makedirs(os.path.dirname(new_chapter_folder), exist_ok=True)
+        if old_chapter_folder != new_chapter_folder or str(instance.slug_chapter_number()) != instance.old_chapter_number:
+            shutil.move(f"{old_chapter_folder}_{instance.old_chapter_number}.zip", f"{new_chapter_folder}_{instance.slug_chapter_number()}.zip")
+
+        if old_chapter_folder != new_chapter_folder:
+            shutil.move(old_chapter_folder, new_chapter_folder)
+            shutil.move(f"{old_chapter_folder}_shrunk", f"{new_chapter_folder}_shrunk")
+            shutil.move(f"{old_chapter_folder}_shrunk_blur", f"{new_chapter_folder}_shrunk_blur")
+            os.rmdir(os.path.dirname(old_chapter_folder))
+
     if instance.series:
         clear_pages_cache()
 
+
+@receiver(post_init, sender=Volume)
+def remember_original_serie_of_volume(sender, instance, **kwargs):
+    instance.old_series_slug = str(instance.series.slug) if hasattr(instance, 'series') else None
+    instance.old_volume_number = int(instance.volume_number) if instance.volume_number else None
+    instance.old_volume_cover = None if instance.volume_cover is None else str(instance.volume_cover)
 
 @receiver(post_save, sender=Volume)
 def save_volume(sender, instance, **kwargs):
     if instance.series:
         clear_pages_cache()
-    if instance.volume_cover:
+    # If series has been changed or the volume has been changed, move images
+    # and a cover has been set in the past and a new cover has not been uploaded
+    if instance.old_series_slug is not None and (instance.old_series_slug != str(instance.series.slug) or instance.old_volume_number != int(instance.volume_number)) \
+        and instance.old_volume_cover is not None and instance.old_volume_cover == instance.volume_cover:
+        old_location = os.path.join(settings.MEDIA_ROOT, os.path.dirname(str(instance.old_volume_cover)))
+        new_location = os.path.join(settings.MEDIA_ROOT, new_volume_folder(instance))
+        if os.path.normpath(old_location) != os.path.normpath(new_location):
+            os.makedirs(new_location, exist_ok=True)
+            for file in os.listdir(old_location):
+                os.rename(os.path.join(old_location, file), os.path.join(new_location, file))
+            os.rmdir(old_location)
+            original_filename = os.path.basename(str(instance.volume_cover))
+            instance.volume_cover = os.path.join(new_volume_folder(instance), original_filename)
+
+            # setup it up to prevent a recursive loop of save call back
+            instance.old_series_slug = str(instance.series.slug)
+            instance.old_volume_number = int(instance.volume_number)
+            instance.old_volume_cover = str(instance.volume_cover)
+            instance.save()
+    elif instance.volume_cover and (instance.old_volume_cover is None or instance.old_volume_cover != instance.volume_cover):
         # Todo change the cover to a random number otherwise cache will die
         save_dir = os.path.join(os.path.dirname(str(instance.volume_cover)))
         vol_cover = os.path.basename(str(instance.volume_cover))
