@@ -5,13 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link defer rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-<!-- 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
 	<link rel="stylesheet" href="{% static 'css/index.css' %}{{ version_query }}">
-	<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="{% static 'js/jquery.min.js' %}"></script>
-	<script src="{% static 'js/alg_lib.js' %}{{ version_query }}"></script>
-	<!-- <script defer src="{% static 'js/bootstrap.min.js' %}"></script> -->
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<link rel="canonical" href="{{ absolute_url }}" />
 	<link rel="manifest" href="{% static 'manifest.json' %}{{ version_query }}">
 	<link rel="shortcut icon" sizes="128x128" type="image/png" href="{% static 'logo-mt-squared-small.png' %}{{ version_query }}" defer />
@@ -49,7 +43,6 @@
   <meta property="og:url" content="{{ absolute_url }}">
   {% endblock %}
 	{% block head %} {% endblock %}
-	{% include "history.html" %}
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -59,7 +52,7 @@
 		<nav class="navbar navbar-expand-lg">
 			<div class="container-fluid">
 				<a class="navbar-brand-logo col-lg-2" href="/" rel="home">
-					<img height="250" src="{% static 'img/logo-mt.png' %}" alt="Danke.moe">
+					<img width="600" height="250" src="{% static 'img/logo-mt.png' %}" alt="Danke.moe">
 				</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -89,6 +82,9 @@
 						<div class="pusher"></div>
 						<li class="nav-item">
 							<a class="nav-link" href="/about/">About</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/kafkaien42/guyamoe">Source Code<svg width="16px" height="16px" viewBox="0 0 24 24" style="cursor:pointer"><g stroke-width="1.4" stroke="#FFF" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 13.5 17 19.5 5 19.5 5 7.5 11 7.5"></polyline><path d="M14,4.5 L20,4.5 L20,10.5 M20,4.5 L11,13.5"></path></g></svg></a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="https://twitter.com/DfLmanga"><img width="24" height="24" alt="Twitter" src="/static/img/twitter.svg"></img>
@@ -127,16 +123,6 @@
 					link.classList.add('s')
 			}
 		});
-
-		function autosize() {
-			var el = this;
-			setTimeout(function() {
-				el.style.height = "";
-				el.style.height = Math.min(el.scrollHeight, 500) + "px";
-				el.nextElementSibling.style.top = Math.min(el.scrollHeight, 500) + "px";
-			}, 0);
-		}
-
 	</script>
 	{% endcache %} {% block body %} {% endblock %}
 	<script>
@@ -155,5 +141,14 @@
 			}
 		}
 	</script>
+<footer>
+	<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/alg_lib.js' %}{{ version_query }}"></script>
+	<!-- <script defer src="{% static 'js/bootstrap.min.js' %}"></script> -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	{% include "history.html" %}
+	{% block footer %} {% endblock %}
+</footer>
 </body>
 </html>

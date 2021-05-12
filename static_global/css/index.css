@@ -76,7 +76,7 @@ header {
 
 .navbar-brand-logo img {
 	max-height: 4.3rem;
-	max-width: 100%;
+	width: auto;
 }
 
 
@@ -1821,21 +1821,18 @@ main a {
 }
 
 .gallery-caption {
- /*line-height:15px;*/
  left:0;
  right:0;
  top:100%;
  z-index:10;
  overflow:hidden;
  width:100%;
- /*max-height:34px;*/
  padding:3px;
  background-color:#3A3F44;
  font-weight:700;
  display:block;
  text-align:center;
  text-decoration:none;
- /*color:#34495e;*/
  border-bottom-left-radius:.3em;
  border-bottom-right-radius:.3em
 }

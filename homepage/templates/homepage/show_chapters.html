@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% load static %}
 
-{% block head %}
+{% block footer %}
 <script defer>
 var reading_button = null;
 
@@ -311,6 +311,23 @@ var reading_button = null;
 	});
 
 </script>
+<script>
+	remoteStorage.on("ready", async () => {
+	  {% if reader_modifier %}
+      let source = "{{ reader_modifier }}".split("/")[1];
+      {% else %}
+      let source = window.location.pathname
+        .split("/")
+        .filter(e => e)[1]
+        .replace("_", " ");
+      {% endif %}
+
+	 {% for series_slug, url, title in unique_series %}
+      await globalHistoryHandler.pushSeries("{{ series_slug }}", "", source, "{{ url }}", "{{ title }}");
+	 {% endfor %}
+      window.dispatchEvent(new CustomEvent("history-ready"));
+    });
+</script>
 {% endblock %} {% block body %}
 <style>
 	.active {
@@ -540,21 +557,4 @@ var reading_button = null;
 		</div>
 	</div>
 </div>
-<script>
-	remoteStorage.on("ready", async () => {
-	  {% if reader_modifier %}
-      let source = "{{ reader_modifier }}".split("/")[1];
-      {% else %}
-      let source = window.location.pathname
-        .split("/")
-        .filter(e => e)[1]
-        .replace("_", " ");
-      {% endif %}
-
-	 {% for series_slug, url, title in unique_series %}
-      await globalHistoryHandler.pushSeries("{{ series_slug }}", "", source, "{{ url }}", "{{ title }}");
-	 {% endfor %}
-      window.dispatchEvent(new CustomEvent("history-ready"));
-    });
-</script>
 {% endblock %}

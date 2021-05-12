@@ -112,22 +112,23 @@ def series_data(only_oneshots=False):
         for chapter in latest_chapters:
             # For some stupid reason, there is no relationship between chapters and volumes
             volume = Volume.objects.filter(volume_number=chapter.volume, series=chapter.series).first()
-            if not volume:
-                print("Cannot find volume for chapter", chapter)
-                continue
             if only_oneshots and not chapter.series.is_oneshot:
                 continue
-            series_list.append({
+            a_series_list = {
                 "name": chapter.series.name,
                 "slug": chapter.series.slug,
                 "series_url": f"/read/manga/{chapter.series.slug}/",
                 "metadata" : [
                     f"Last Updated Ch. {chapter.clean_chapter_number()} - {datetime.utcfromtimestamp(chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d')}"
                     ],
-                "has_cover": volume.volume_cover and volume.volume_cover != "",
-                "volume_cover": f"/media/{volume.volume_cover}",
-                "volume_cover_webp": f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp", #?v={i}
-                })
+                "has_cover": volume and volume.volume_cover and volume.volume_cover != ""
+            }
+            if volume and a_series_list['has_cover']:
+                a_series_list["volume_cover"] = f"/media/{volume.volume_cover}"
+                a_series_list["volume_cover_webp"] = f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp"
+                a_series_list["volume_cover_width"] = int(volume.volume_cover.width)
+                a_series_list["volume_cover_height"] = int(volume.volume_cover.height)
+            series_list.append(a_series_list)
             # i +=1
             # if i > 4:
             #     break

@@ -17,7 +17,7 @@
 <meta name="author" content="{{ author }}" />
 {% endblock %}
 
-{% block head %}
+{% block footer %}
 <script defer>
 var reading_button = null;
 
@@ -374,6 +374,10 @@ var reading_button = null;
 	});
 
 </script>
+<script>
+	// History tagging
+	tag();
+</script>
 {% endblock %} {% block body %}
 <style>
 	.active {
@@ -657,8 +661,4 @@ var reading_button = null;
 		</div>
 	</div>
 </div>
-<script>
-	// History tagging
-	tag();
-</script>
 {% endblock %}

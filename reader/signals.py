@@ -115,6 +115,8 @@ def remember_original_serie_of_volume(sender, instance, **kwargs):
 def save_volume(sender, instance, **kwargs):
     if instance.series:
         clear_pages_cache()
+    if instance.volume_cover is None or instance.volume_cover == "":
+        return
     # If series has been changed or the volume has been changed, move images
     # and a cover has been set in the past and a new cover has not been uploaded
     if instance.old_series_slug is not None and (instance.old_series_slug != str(instance.series.slug) or instance.old_volume_number != int(instance.volume_number)) \
