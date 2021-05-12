@@ -1662,34 +1662,6 @@ function UI_Reader(o) {
 	this.shuffleRandomChapter = function() {
 		this._.random_chapter.classList.add('is-hidden');
         return;
-
-		if(!this.current.chapters[this.SCP.chapter].previewsBackup)
-			this.current.chapters[this.SCP.chapter].previewsBackup = this.current.chapters[this.SCP.chapter].previews[this.SCP.group].slice();
-		var previews = this.current.chapters[this.SCP.chapter].previewsBackup;
-		var pages = this.current.chapters[this.SCP.chapter].images[this.SCP.group];
-		function shuffle(array) {
-			var currentIndex = array.length, temporaryValue, randomIndex;
-			while (0 !== currentIndex) {
-				randomIndex = Math.floor(Math.random() * currentIndex);
-				currentIndex -= 1;
-				temporaryValue = array[currentIndex];
-				array[currentIndex] = array[randomIndex];
-				array[randomIndex] = temporaryValue;
-			}
-			return array;
-		}
-		var subarr = previews.slice(4,16);
-		subarr.unshift(subarr.pop());
-		var uarr = [];
-		for(var i=0; i<subarr.length; i=i+2) {
-			uarr.push([subarr[i], subarr[i+1]])
-			shuffle(uarr[uarr.length-1]);
-		}
-		uarr = shuffle(uarr);
-		uarr = uarr.reduce((acc, val) => acc.concat(val), []);
-
-		this.current.chapters[this.SCP.chapter].previews[this.SCP.group] = previews.slice(0, 4).concat(uarr,previews.slice(-1));
-		this.current.chapters[this.SCP.chapter].images[this.SCP.group] = this.current.chapters[this.SCP.chapter].previews[this.SCP.group].map(p => p.replace('_shrunk',''))
 	}
 
 	this._.chap_prev.onmousedown = e => this.prevChapter();
@@ -2619,27 +2591,30 @@ function URLChanger(o) {
 	var pathName = pathSplit
 			.concat([SCP.series, SCP.chapter.replace('.', '-'), SCP.page + 1, ''])
 			.join('/');
+		var chapterPrefix = `${SCP.chapter} - ${SCP.chapterName}`;
+		if (SCP.chapterName == '')
+		{
+			chapterPrefix = `Chapter ${SCP.chapter}`;
+		}
 
+		var title = `${Reader.current.title} - ${chapterPrefix} - Page ${SCP.page + 1} | ${this.hostname}`
 		switch(Settings.get('bhv.historyUpdate')) {
 			case 'none':
-			var	title = `${Reader.current.title} | ${this.hostname}`;
+				var	short_title = `${Reader.current.title} | ${this.hostname}`;
 				window.history.replaceState(null, title, pathName);
-				document.title = title;
+				document.title = short_title;
 				break;
 			case 'replace':
-				title = `${SCP.chapter} - ${SCP.chapterName}, Page ${SCP.page + 1} - ${Reader.current.title} | ${this.hostname}`
 				window.history.replaceState(null, title, pathName);
 				document.title = title;
 				break;
 			case 'chap':
-				title = `${SCP.chapter} - ${SCP.chapterName}, Page ${SCP.page + 1} - ${Reader.current.title} | ${this.hostname}`
 				window.history.replaceState(null, title, pathName);
 				document.title = title;
 				if(SCP.chapter == this.chapter) return;
 				window.history.pushState({chapter: SCP.chapter, page: SCP.page}, title, pathName);
 				break;
 			case 'jump':
-				title = `${SCP.chapter} - ${SCP.chapterName}, Page ${SCP.page + 1} - ${Reader.current.title} | ${this.hostname}`
 				if(Math.abs(this.page - SCP.page) > 2 || SCP.chapter != this.chapter) {
 					window.history.pushState({chapter: SCP.chapter, page: SCP.page}, title, pathName);
 				}else{
@@ -2649,7 +2624,6 @@ function URLChanger(o) {
 				break;
 			case 'all':
 				if(this.page != SCP.page || SCP.chapter != this.chapter) {
-					title = `${SCP.chapter} - ${SCP.chapterName}, Page ${SCP.page + 1} - ${Reader.current.title} | ${this.hostname}`
 					window.history.pushState({chapter: SCP.chapter, page: SCP.page}, title, pathName);
 					document.title = title;
 				}

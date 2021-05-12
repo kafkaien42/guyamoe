@@ -153,6 +153,7 @@ cache_control(public=True, max_age=300, s_maxage=300)
 def all_chapters(request):
     data = chapters_data()
     data["version_query"] = settings.STATIC_VERSION
+    data["page_title"] = "Latest Chapters"
     return render(request, "homepage/show_chapters.html", data)
 
 
@@ -161,6 +162,7 @@ cache_control(public=True, max_age=300, s_maxage=300)
 def all_series(request):
     data = series_data()
     data["version_query"] = settings.STATIC_VERSION
+    data["page_title"] = "Series"
     return render(request, "homepage/show_series.html", data)
 
 
@@ -169,6 +171,7 @@ cache_control(public=True, max_age=300, s_maxage=300)
 def all_oneshots(request):
     data = series_data(only_oneshots=True)
     data["version_query"] = settings.STATIC_VERSION
+    data["page_title"] = "Oneshots"
     return render(request, "homepage/show_series.html", data)
 
 

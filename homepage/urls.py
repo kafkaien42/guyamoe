@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path, re_path
+from django.views.generic.base import TemplateView
 
 from . import views
 
@@ -11,16 +12,6 @@ urlpatterns = [
     path("latest_chapters/", views.all_chapters, name="site-chapters"),
     path("admin_home/", views.admin_home, name="admin_home"),
     path("about/", views.about, name="site-about"),
-    # re_path(
-    #     r"^(?P<chapter>[\d-]{1,9})/$",
-    #     views.main_series_chapter,
-    #     name="site-main-series-chapter",
-    # ),
-    # re_path(
-    #     r"^(?P<chapter>[\d-]{1,9})/(?P<page>[\d]{1,9})/$",
-    #     views.main_series_page,
-    #     name="site-main-series-page",
-    # ),
-    # path("latest/", views.latest, name="site-main-series-latest"),
+    path("robots.txt", TemplateView.as_view(template_name="homepage/robots.txt", content_type="text/plain")),
     path("random/", views.random, name="site-main-series-random"),
 ]
