@@ -100,7 +100,6 @@ def post_save_chapter(sender, instance, **kwargs):
             shutil.move(old_chapter_folder, new_chapter_folder)
             shutil.move(f"{old_chapter_folder}_shrunk", f"{new_chapter_folder}_shrunk")
             shutil.move(f"{old_chapter_folder}_shrunk_blur", f"{new_chapter_folder}_shrunk_blur")
-            os.rmdir(os.path.dirname(old_chapter_folder))
 
     if instance.series:
         clear_pages_cache()

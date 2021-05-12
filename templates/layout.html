@@ -25,22 +25,22 @@
 	<meta name="theme-color" content="#2b2f33" />
 	<meta name="format-detection" content="telephone=no">
 	<meta name="google-site-verification" content="QpnvbBE-TzYhqCCgViBhlBR2cGl7HXNUpN2Yu67a8z8" />
-  {% block meta %}
-  {% if page_title %}
-  <title>{{ page_title }} | {{ brand.name }}</title>
-  {% else %}
+	{% block meta %}
 	{% if template == "home" %}
-	  <title>{{ home_brand.name }}</title>
-	  <meta name="twitter:description" content="{{ home_brand.description }}" />
-      <meta property="og:description" content="{{ home_brand.description }}" />
-      <meta name="description" content="{{ home_brand.description }}">
+		<title>{{ home_brand.name }}</title>
+		<meta name="twitter:description" content="{{ home_brand.description }}" />
+		<meta property="og:description" content="{{ home_brand.description }}" />
+		<meta name="description" content="{{ home_brand.description }}">
 	{% else %}
-  	  <title>{{ brand.name }}</title>
-	  <meta name="twitter:description" content="{% firstof page_description brand.description %}" />
-      <meta property="og:description" content="{% firstof page_description brand.description %}" />
-      <meta name="description" content="{% firstof page_description brand.description %}">
+		{% if page_title %}
+			<title>{{ page_title }} | {{ brand.name }}</title>
+		{% else %}
+			<title>{{ brand.name }}</title>
+		{% endif %}
+		<meta name="twitter:description" content="{% firstof page_description brand.description %}" />
+		<meta property="og:description" content="{% firstof page_description brand.description %}" />
+		<meta name="description" content="{% firstof page_description brand.description %}">
 	{% endif %}
-  {% endif %}
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="{% firstof page_title brand.name %}" />
