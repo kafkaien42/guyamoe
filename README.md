@@ -1,10 +1,24 @@
-# Guya.moe
-Generalized manga reading framework. Adapted for Kaguya-sama manga, but can be used generically for any and all manga.
+# Danke.moe
+Website for the [Danke Für Lesen](https://danke.moe) scanlation group.
+Generalized manga reading framework for scanlation groups. This is a fork of [Guya.moe](https://github.com/appu1232/guyamoe), a website focus on Kaguya-sama manga. Most of the nginx configs are from [mahoushoujobu.com](https://github.com/milleniumbug/guyamoe)'s fork.
 
-Testing Supported By<br/>
-<img width="160" src="http://foundation.zurb.com/sites/docs/assets/img/logos/browser-stack.svg" alt="BrowserStack"/>
+Difference from the original:
+ - You should only need to update `about.html`, `layout.html`, `base.py`, `prod.py` and of course the logos to have a functional website for you scanlation group.
+ - Remove hardcoded reference to Kaguya-sama in source code. The website will work even if there is no manga in the database.
+ - Add a homepage where the series are shown as a gallery.
+ - Add a page to see the list of chapters from all series.
+ - In embbedded link to chapters a preview of the first page is shown, instead of the site's logo.
+ - Sitemap.xml works even if you don't have pages.
 
-⚠ **Note:** The install instructions below will not result in a general purpose CMS due to the amount of hardcoded assets in Guyamoe.
+
+⚠ **Note:** The install instructions below will not result in a general purpose CMS due to the amount of hardcoded assets.
+
+Limitations:
+ - This is not a a generalized CMS!
+ - Only one unique numbered chapter per scanlation group per series.
+ - No multilingual support, so you cannot have the same chapter in different languages.
+ - Only one group assigned to each chapter. One work around for collaborations is to create a group with the name of both groups.
+ - No tagging system. The only tag currently is `is_oneshot`.
 
 ## Prerequisites 
 - git
@@ -12,20 +26,25 @@ Testing Supported By<br/>
 - pip
 - virtualenv
 
+For Debian:
+```
+sudo apt-get install libpq-dev build-essential python3-dev python3-pip
+```
+
 ## Install
 1. Create a venv for Guyamoe in your home directory.
 ```
-virtualenv -p python3 ~/guyamoe
+virtualenv -p python3 ~/env_guyamoe
 ```
 
 2. Clone Guyamoe's source code into the venv.
 ```
-git clone https://github.com/appu1232/guyamoe ~/guyamoe/app
+git clone https://github.com/kafkaien42/guyamoe ~/guyamoe
 ```
 
 3. Activate the venv.
 ```
-cd ~/guyamoe/app && source ../bin/activate
+cd ~/guyamoe && source ~/env_guyamoe/bin/activate
 ```
 
 4. Install Guyamoe's dependencies.
@@ -77,7 +96,10 @@ Now the site should be accessible on localhost:8000
 
 Django docs say this: [DO NOT USE THIS SERVER IN A PRODUCTION SETTING. It has not gone through security audits or performance tests.](https://docs.djangoproject.com/en/3.1/ref/django-admin/). Below is the section on my attempt on making it work good enough for production, on Debian.
 
-## Other info
+## How to Use
+
+Pretty much everything is done throught `/admin`.  To upload a new chapter or update a chapter you need to go to the series page's (`/reader/series/<series_slug_name>`) and add `/admin` to the url to get `/reader/series/<series_slug_name>/admin`, a upload button should appear. While you don't necessary need to create a volume to each chapter, some part of the website will ignore chapters without an assigned volume. 
+
 Relevant URLs (as of now): 
 
 - `/` - home page
@@ -123,3 +145,9 @@ sudo ln -s /etc/nginx/sites-available/guyamoe /etc/nginx/sites-enabled/guyamoe
 ```
 
 Use certbot to set up TLS certificate for your own domain
+
+# Tool
+To check if the paths of every chapter and volume are valid:
+```
+python3 manage.py chapter_sanity_check
+```
