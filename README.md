@@ -125,15 +125,7 @@ pip3 install uwsgi
 Add the user that will be running the app to www-data
 
 ```
-sudo usermod -a -G www-data milleniumbug
-```
-
-Set the correct permissions
-
-```
-chmod +x nginx/start.sh
-sudo chown milleniumbug:www-data nginx/socket
-sudo chown g+s nginx/socket
+sudo usermod -a -G www-data ubuntu
 ```
 
 Copy the config to appropriate places
@@ -144,7 +136,13 @@ sudo cp nginx/guya-site-nginx /etc/nginx/sites-available/guyamoe
 sudo ln -s /etc/nginx/sites-available/guyamoe /etc/nginx/sites-enabled/guyamoe
 ```
 
-Use certbot to set up TLS certificate for your own domain
+To start the server and make start at boot time:
+```
+systemctl start guyamoe.service
+systemctl enable guyamoe.service
+```
+
+Use [certbot](https://certbot.eff.org/) to set up TLS certificate for your own domain.
 
 # Tool
 To check if the paths of every chapter and volume are valid:

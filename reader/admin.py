@@ -20,7 +20,7 @@ class HitCountAdmin(admin.ModelAdmin):
         if isinstance(obj.content, Series):
             return obj.content.name
         if isinstance(obj.content, Chapter):
-            return obj.content.title
+            return obj.content.series.name
         else:
             return obj
 

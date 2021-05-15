@@ -69,6 +69,7 @@ def series_page_data(series_slug):
             if vol.volume_cover:
                 cover_vol_url = f"/media/{vol.volume_cover}"
                 cover_vol_url_webp = cover_vol_url.rsplit(".", 1)[0] + ".webp"
+                cover_vol_width_height = (vol.volume_cover.width, vol.volume_cover.height)
                 break
         content_series = ContentType.objects.get(app_label="reader", model="series")
         hit, _ = HitCount.objects.get_or_create(
@@ -135,6 +136,8 @@ def series_page_data(series_slug):
             "slug": series.slug,
             "cover_vol_url": cover_vol_url,
             "cover_vol_url_webp": cover_vol_url_webp,
+            "cover_vol_width": int(cover_vol_width_height[0]),
+            "cover_vol_height": int(cover_vol_width_height[1]),
             "metadata": [
                 ["Author", series.author.name],
                 ["Artist", series.artist.name],

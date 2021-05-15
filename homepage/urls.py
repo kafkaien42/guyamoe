@@ -6,7 +6,7 @@ from django.views.generic.base import TemplateView
 from . import views
 
 urlpatterns = [
-    path("", views.all_series, name="site-home"),
+    path("", views.all_ongoing, name="site-home"),
     path("series/", views.all_series, name="site-series"),
     path("oneshots/", views.all_oneshots, name="site-oneshot"),
     path("latest_chapters/", views.all_chapters, name="site-chapters"),

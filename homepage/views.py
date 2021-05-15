@@ -94,26 +94,37 @@ def chapters_data():
 
 
 cache_control(public=True, max_age=60, s_maxage=60)
-def series_data(only_oneshots=False):
-    series_page_dt = cache.get(f"oneshots_page_dt" if only_oneshots else f"series_page_dt")
+def series_data(include_series=False, include_oneshots=False):
+    assert include_series or include_oneshots, "You must include something."
+    to_label = {
+        (True, True): "ongoing",
+        (False, True): "oneshots",
+        (True, False): "series",
+    }
+    cache_label = f"{to_label[(include_series, include_oneshots)]}_page_dt"
+    series_page_dt = cache.get(cache_label)
     if not series_page_dt:
-        # series = get_object_or_404(Series)
-        # volumes = Volume.objects.select_related(
-        #     "series"
-        # ).values('series').annotate(Min('volume_number'))
-
-        # min_vol = Volume.objects.order_by('series').values('series').annotate(Min('volume_number'))
-        # volumes = Volume.objects.select_related("series").filter(volume_number__in=min_vol.values_list('volume_number__min', flat=True))
-        series_latest_uploaded = Chapter.objects.order_by('series').values('series').annotate(Max('uploaded_on'))
+        if not include_series or not include_oneshots: 
+            series_latest_uploaded = Chapter.objects.filter(series__is_oneshot=include_oneshots).order_by('series').values('series').annotate(Max('uploaded_on'))
+        else:
+            series_latest_uploaded = Chapter.objects.order_by('series').values('series').annotate(Max('uploaded_on'))
         latest_chapters = Chapter.objects.select_related("series").filter(uploaded_on__in=series_latest_uploaded.values_list('uploaded_on__max', flat=True)).order_by("-uploaded_on")
 
+        volumes = Volume.objects.select_related("series").all()
+        series_to_first_volume = {}
+        for volume in volumes:
+            vol_num = int(volume.volume_number)
+            if volume.series.id not in series_to_first_volume:
+                series_to_first_volume[volume.series.id] = (vol_num, volume)
+            elif series_to_first_volume[volume.series.id][0] > vol_num:
+                series_to_first_volume[volume.series.id] = (vol_num, volume)
         series_list = []
         # i = 0
         for chapter in latest_chapters:
             # For some stupid reason, there is no relationship between chapters and volumes
-            volume = Volume.objects.filter(volume_number=chapter.volume, series=chapter.series).first()
-            if only_oneshots and not chapter.series.is_oneshot:
-                continue
+            volume = None
+            if chapter.series.id in series_to_first_volume:
+                volume = series_to_first_volume[chapter.series.id][1]
             a_series_list = {
                 "name": chapter.series.name,
                 "slug": chapter.series.slug,
@@ -145,7 +156,7 @@ def series_data(only_oneshots=False):
             ],
             # "reader_modifier": "read/manga",
         }
-        cache.set(f"oneshots_page_dt" if only_oneshots else f"series_page_dt", series_page_dt, 3600 * 12)
+        cache.set(cache_label, series_page_dt, 3600 * 12)
     return series_page_dt
 
 
@@ -160,8 +171,17 @@ def all_chapters(request):
 
 cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
+def all_ongoing(request):
+    data = series_data(include_series=True, include_oneshots=True)
+    data["version_query"] = settings.STATIC_VERSION
+    # data["page_title"] = "Series"
+    return render(request, "homepage/show_series.html", data)
+
+
+cache_control(public=True, max_age=300, s_maxage=300)
+@decorator_from_middleware(OnlineNowMiddleware)
 def all_series(request):
-    data = series_data()
+    data = series_data(include_series=True)
     data["version_query"] = settings.STATIC_VERSION
     data["page_title"] = "Series"
     return render(request, "homepage/show_series.html", data)
@@ -170,7 +190,7 @@ def all_series(request):
 cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def all_oneshots(request):
-    data = series_data(only_oneshots=True)
+    data = series_data(include_oneshots=True)
     data["version_query"] = settings.STATIC_VERSION
     data["page_title"] = "Oneshots"
     return render(request, "homepage/show_series.html", data)

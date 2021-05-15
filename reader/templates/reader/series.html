@@ -478,7 +478,7 @@ var reading_button = null;
 					<input type="hidden" name="slug" value="{{ slug }}">
 				</div>
 				<div id="modalSubmit" class="modal-footer">
-					<button type="button" id="submitForm" class="btn btn-primary">Upload Chapter</button>
+					<button type="button" id="submitForm" class="btn btn-primary">Upload Chapter (100MB max)</button>
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 				</div>
 			</form>
@@ -498,11 +498,10 @@ var reading_button = null;
 					</div>
 					<div class="media media-3x4 justify-content-center">
 						<picture>
-							{% if cover_vol_url_webp %}
 							<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="img-fluid"
-								alt="{{ series }} manga" />
-							{% endif %}
-							<img src="{{ cover_vol_url }}" class="img-fluid" alt="{{ series }} manga" />
+								alt="{{ series }} manga" width="{{ cover_vol_width }}" height="{{ cover_vol_height }}"/>
+							<img src="{{ cover_vol_url }}" class="img-fluid"
+							    alt="{{ series }} manga" width="{{ cover_vol_width }}" height="{{ cover_vol_height }}"/>
 						</picture>
 					</div>
 				</div>
@@ -524,10 +523,12 @@ var reading_button = null;
 			</div>
 			<div class="col-lg-8 col-md-7 col-sm-11 col-xs-12 series-content">
 				<article>
+					<h1>{{ series }}</h1>
 					<picture>
 						<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="img-fluid"
-							alt="{{ series }} manga" />
-						<img src="{{ cover_vol_url }}" class="img-fluid" alt="{{ series }} manga" />
+							alt="{{ series }} manga" width="{{ cover_vol_width }}" height="{{ cover_vol_height }}"/>
+						<img src="{{ cover_vol_url }}" class="img-fluid"
+						    alt="{{ series }} manga" width="{{ cover_vol_width }}" height="{{ cover_vol_height }}"/>
 					</picture>
 					<table class="table table-borderless table-sm small" style="display: none;">
 						<tbody>
@@ -540,7 +541,6 @@ var reading_button = null;
 							{% endfor %}
 						</tbody>
 					</table>
-					<h1>{{ series }}</h1>
 					{% if alt_titles %}
 					{% for alt in alt_titles %}
 					<h2>

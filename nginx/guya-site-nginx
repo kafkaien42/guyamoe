@@ -31,17 +31,35 @@ server {
         rewrite ^(.*)$ /maintenance.html break ;
     }
 
-    client_max_body_size 25M;
+    client_max_body_size 100M;
 
     location /media {
-        # expires 7d;
+        expires 365d;
         alias /home/ubuntu/guyamoe/media;
     }
 
     location ~ ^/static/(.*) {
-        # expires 7d;
+        expires 365d;
+        gzip on;
+        gzip_disable "msie6";
+
+        gzip_comp_level 6;
+        gzip_min_length 1100;
+        gzip_buffers 16 8k;
+        gzip_proxied any;
+        gzip_types
+            text/plain
+            text/css
+            text/js
+            text/xml
+            text/javascript
+            application/javascript
+            application/json
+            application/xml
+            application/rss+xml
+            image/svg+xml;
         root /home/ubuntu/guyamoe;
-        try_files /static_global/$1 /homepage/static/$1 /reader/static/$1 /static/$1; # @process_in_app;
+        try_files /static_global/$1 /homepage/static/$1 /reader/static/$1 /static/$1 @process_in_app;
     }
 
     location / {
@@ -49,10 +67,11 @@ server {
         include /home/ubuntu/guyamoe/nginx/uwsgi_params;
     }
 
-    #location @process_in_app {
-    #    uwsgi_pass guyamoe;
-    #    include /home/ubuntu/guyamoe/nginx/uwsgi_params;
-    #}
+    location @process_in_app {
+        uwsgi_pass guyamoe;
+        include /home/ubuntu/guyamoe/nginx/uwsgi_params;
+    }
+
     listen [::]:443 ssl ipv6only=on; # managed by Certbot
     listen 443 ssl; # managed by Certbot
     ssl_certificate /etc/letsencrypt/live/danke.moe/fullchain.pem; # managed by Certbot
