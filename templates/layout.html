@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link defer rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-	<link rel="stylesheet" href="{% static 'css/index.css' %}{{ version_query }}">
+	<!-- <link rel="stylesheet" href="{% static 'css/index.css' %}{{ version_query }}"> -->
 	<link rel="canonical" href="{{ absolute_url }}" />
 	<link rel="manifest" href="{% static 'manifest.json' %}{{ version_query }}">
 	<link rel="shortcut icon" sizes="128x128" type="image/png" href="{% static 'logo-mt-squared-small.png' %}{{ version_query }}" defer />
@@ -47,6 +47,7 @@
 </head>
 
 <body class="d-flex flex-column h-100">
+	{% include "index.css.html" %}
 	{% include "tracking.html" %}
 	{% load cache %} {% cache 1 sidebar %}
 	<header>
