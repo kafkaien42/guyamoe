@@ -3574,7 +3574,7 @@ function UI_About(o) {
 	UI.call(this, Object.assign(o, {
 		kind: ['About'].concat(o.kind || []),
 		html: `<div>
-			<img src="/static/img/Guya-moe.png">
+			<img class="guya-logo-about" data-src="/static/img/Guya-moe.png">
 			<p class="muted">Version: v2.20.20200820</p>
 			<hr>
 			<p>Design, UX: Algoinde</p>

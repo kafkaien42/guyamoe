@@ -1,2 +1,9 @@
 User-agent: *
-Disallow: /api/
+Disallow: /admin/*
+Disallow: /admin_home/
+Disallow: /read/update_view_count/
+Disallow: /proxy/*
+Disallow: /api/download_chapter/*
+Disallow: /api/upload_new_chapter/*
+
+Sitemap: https://danke.moe/sitemap.xml

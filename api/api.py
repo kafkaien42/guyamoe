@@ -19,7 +19,11 @@ def all_chapter_data_etag(request):
     etag = cache.get("all_chapter_data_etag")
     if not etag:
         obj = Chapter.objects.order_by("-uploaded_on").first()
-        etag = str(obj.updated_on or obj.uploaded_on)
+
+        if obj:
+            etag = str(obj.updated_on or obj.uploaded_on)
+        else:
+           etag = "2021-04-20"
         cache.set("all_chapter_data_etag", etag, 600)
     return etag
 
@@ -32,7 +36,10 @@ def chapter_data_etag(request, series_slug):
             .order_by("-uploaded_on")
             .first()
         )
-        etag = str(obj.updated_on or obj.uploaded_on)
+        if obj:
+           etag = str(obj.updated_on or obj.uploaded_on)
+        else:
+           etag = "2021-04-20"
         cache.set(f"{series_slug}_chapter_data_etag", etag, 600)
     return etag
 

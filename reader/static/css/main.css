@@ -23,7 +23,7 @@
 
 @font-face {
 	font-family: 'guya';
-	src: url('../fonts/guya.woff?reqlv7') format('woff');
+	src: url('../fonts/guya.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
 }

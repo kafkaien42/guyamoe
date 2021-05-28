@@ -132,6 +132,12 @@ class Chapter(models.Model):
             else str(self.chapter_number)
         )
 
+    def clean_title(self):
+        if self.title:
+            return f"Chapter {self.clean_chapter_number()} - {self.title}"
+        else:
+            return f"Chapter {self.clean_chapter_number()}"
+
     def slug_chapter_number(self):
         return self.clean_chapter_number().replace(".", "-")
 
