@@ -26,6 +26,7 @@
 	src: url('../fonts/guya.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
@@ -44,6 +45,7 @@
 	font-variant: normal;
 	text-transform: none;
 	line-height: 1;
+	font-display: swap;
 
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;

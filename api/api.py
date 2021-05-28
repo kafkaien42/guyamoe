@@ -349,13 +349,6 @@ def chapter_post_process(chapter, is_update=True, *, save_zip=True):
     index_chapter(chapter)
 
 
-def clear_series_cache(series_slug):
-    cache.delete(f"series_api_data_{series_slug}")
-    cache.delete(f"series_page_data_{series_slug}")
-    cache.delete(f"groups_data_{series_slug}")
-    cache.delete(f"vol_covers_{series_slug}")
-
-
 def clear_pages_cache():
     online = cache.get("online_now")
     if not online:
@@ -370,6 +363,15 @@ def clear_pages_cache():
         cache.set(ip, ip, 450)
     cache.set("online_now", set(ip_list), 600)
     cache.set("peak_traffic", peak_traffic, 3600 * 6)
+
+
+def clear_series_cache(series_slug):
+    # TODO find better solution
+    clear_pages_cache()
+    # cache.delete(f"series_api_data_{series_slug}")
+    # cache.delete(f"series_page_data_{series_slug}")
+    # cache.delete(f"groups_data_{series_slug}")
+    # cache.delete(f"vol_covers_{series_slug}")
 
 
 def zip_chapter(chapter: Chapter):

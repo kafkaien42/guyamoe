@@ -13,7 +13,7 @@ from django.db.models import Min, F, Max
 
 from homepage.middleware import ForwardParametersMiddleware
 from reader.middleware import OnlineNowMiddleware
-from reader.models import Chapter, Series, Volume
+from reader.models import Chapter, Series, Volume, HitCount
 from reader.views import series_page_data
 from itertools import repeat
 
@@ -42,10 +42,12 @@ def chapters_data():
         chapters = Chapter.objects.order_by("-uploaded_on").select_related(
             "series", "group"
         )
+        chapter_content_type = ContentType.objects.get(app_label="reader", model="chapter")
+        chapters_hit_count = HitCount.objects.filter(content_type=chapter_content_type).all()
+        id_to_hit_count = {int(hit_count.object_id) : int(hit_count.hits) for hit_count in chapters_hit_count}
         seriess = Series.objects.all()
         latest_chapter = chapters.latest("uploaded_on") if chapters else None
         chapter_list = []
-        volume_dict = defaultdict(list)
         for chapter in chapters:
             u = chapter.uploaded_on
             chapter_list.append(
@@ -59,14 +61,7 @@ def chapters_data():
                     chapter.volume or "null",
                     chapter.series.name,
                     chapter.series.slug,
-                ]
-            )
-            volume_dict[chapter.volume].append(
-                [
-                    chapter.clean_chapter_number(),
-                    chapter.slug_chapter_number(),
-                    chapter.group.name,
-                    [u.year, u.month - 1, u.day, u.hour, u.minute, u.second],
+                    id_to_hit_count.get(int(chapter.id), 0),
                 ]
             )
         unique_series = []

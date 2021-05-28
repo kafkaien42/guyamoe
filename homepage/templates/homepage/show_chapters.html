@@ -508,6 +508,7 @@ var reading_button = null;
 									Title
 								</th>
 								<th scope="col">Group</th>
+								<th scope="col">Views</th>
 								<th scope="col">Last Updated</th>
 								{% if "download" in available_features %}
 								<th scope="col" style="padding-left: 12px;">
@@ -517,7 +518,7 @@ var reading_button = null;
 							</tr>
 						</thead>
 						<tbody id="chapterTable">
-							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, serie_name, serie_slug in chapter_list %}
+							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, serie_name, serie_slug, hit_count in chapter_list %}
 							<tr class="table-default" data-serie="{{ serie_slug }}" data-chapter="{{ chapter }}">
 								<td scope="row" class="read-icon" onclick="updateRead('{{ serie_slug }}', '{{ chapter }}')"></td>
 								<td scope="row" class="chapter-title">
@@ -535,6 +536,7 @@ var reading_button = null;
 									</a>
 								</td>
 								<td scope="row">{{ group }}</td>
+								<td scope="row" class="text-center">{{ hit_count }}</td>
 								<td scope="row" class="detailed-chapter-upload-date">{{ upload_date }}</td>
 								{% if "download" in available_features %}
 								<td scope="row" class="detailed-chapter-download-chapter">

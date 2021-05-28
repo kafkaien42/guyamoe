@@ -19,22 +19,6 @@ X_FRAME_OPTIONS = "ALLOW"
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "guya.moe",
-    "www.guya.moe",
-    "kaguya.guya.moe",
-    "www.kaguya.guya.moe",
-    "ka.guya.moe",
-    "www.ka.guya.moe",
-    "ice.guya.moe",
-    "www.ice.guya.moe",
-    "baka.guya.moe",
-    "www.baka.guya.moe",
-    "trash.guya.moe",
-    "www.trash.guya.moe",
-    "dog.guya.moe",
-    "www.dog.guya.moe",
-    "kuu.guya.moe",
-    "www.kuu.guya.moe",
     "danke.moe",
     "localhost",
 ]
@@ -64,7 +48,7 @@ LOGGING = {
 }
 
 
-CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache",}}
+# CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache",}}
 
 # CACHES = {
 #     "default": {
@@ -72,12 +56,12 @@ CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache",}
 #         "LOCATION": "unique-snowflake",
 #     }
 # }
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-#         "LOCATION": "127.0.0.1:11211",
-#     }
-# }
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        "LOCATION": "127.0.0.1:11211",
+    }
+}
 
 # DATABASES = {
 #     "default": {
