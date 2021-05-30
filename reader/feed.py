@@ -2,6 +2,8 @@ from django.contrib.syndication.views import Feed
 from django.core.cache import cache
 from django.shortcuts import reverse
 from django.utils.feedgenerator import DefaultFeed
+from django.conf import settings
+
 
 from reader.models import Chapter, Series
 
@@ -13,7 +15,7 @@ class CorrectMimeTypeFeed(DefaultFeed):
 class AllChaptersFeed(Feed):
     feed_type = CorrectMimeTypeFeed
     link = "/latest_chapters/"
-    title = "All Chapter updates"
+    title = settings.BRANDING_NAME
     description = "Latest chapter updates"
 
     description_template = 'rss_feed.html'
