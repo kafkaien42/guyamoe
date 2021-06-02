@@ -406,6 +406,18 @@ var reading_button = null;
 		background: none !important;
 		background-color: none !important;
 	}
+
+
+	body.modal-open .page-series{
+		-webkit-filter: blur(4px);
+		-moz-filter: blur(4px);
+		-o-filter: blur(4px);
+		-ms-filter: blur(4px);
+		filter: blur(4px);
+		filter: url("https://gist.githubusercontent.com/amitabhaghosh197/b7865b409e835b5a43b5/raw/1a255b551091924971e7dee8935fd38a7fdf7311/blur".svg#blur);
+		filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='4');
+	}
+
 </style>
 <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -486,6 +498,22 @@ var reading_button = null;
 	</div>
 </div>
 {% endif %}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>This series is NSFW</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you old enough to read it?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default">Get me out of here</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">I am 18+</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="container-fluid page-series">
 	<div class="bs-docs-section clearfix mt-1">
 		<div class="row justify-content-center">
@@ -523,6 +551,8 @@ var reading_button = null;
 			</div>
 			<div class="col-lg-8 col-md-7 col-sm-11 col-xs-12 series-content">
 				<article>
+
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">See Modal</button>
 					<h1>{{ series }}</h1>
 					<picture>
 						<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="img-fluid"

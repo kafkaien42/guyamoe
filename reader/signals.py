@@ -74,7 +74,7 @@ def pre_save_chapter(sender, instance, **kwargs):
             instance.series.save()
 
 @receiver(post_init, sender=Chapter)
-def remember_original_serie_of_chapter(sender, instance, **kwargs):
+def remember_original_series_of_chapter(sender, instance, **kwargs):
     instance.old_chapter_number = str(instance.slug_chapter_number()) if instance.chapter_number is not None else None
     instance.old_series_slug = str(instance.series.slug) if hasattr(instance, 'series') else None
     instance.old_group_id = str(instance.group.id) if hasattr(instance, 'group') else None
@@ -106,7 +106,7 @@ def post_save_chapter(sender, instance, **kwargs):
 
 
 @receiver(post_init, sender=Volume)
-def remember_original_serie_of_volume(sender, instance, **kwargs):
+def remember_original_series_of_volume(sender, instance, **kwargs):
     instance.old_series_slug = str(instance.series.slug) if hasattr(instance, 'series') else None
     instance.old_volume_number = int(instance.volume_number) if instance.volume_number else None
     instance.old_volume_cover = None if instance.volume_cover is None else str(instance.volume_cover)

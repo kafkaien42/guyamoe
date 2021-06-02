@@ -13,6 +13,8 @@ Difference from the original:
 
 ⚠ **Note:** The install instructions below will not result in a general purpose CMS due to the amount of hardcoded assets.
 
+⚠ **Important:** Please don't use this framework to run ads.
+
 Limitations:
  - This is not a a generalized CMS!
  - Only one unique numbered chapter per scanlation group per series.

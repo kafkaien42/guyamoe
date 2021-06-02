@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 
 from reader.models import Chapter, Volume
 from django.conf import settings
-from reader.scraper.mappings import SCRAPER_MAPPINGS
 
 import os
 
