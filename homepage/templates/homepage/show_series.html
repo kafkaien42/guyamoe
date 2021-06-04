@@ -191,10 +191,10 @@ var reading_button = null;
 					<div class="mb-1">
 						<a  href="{{ s.series_url }}" >
 							{% if s.has_cover %}
-								{% if forloop.counter0 < 5 %}
-								<img class="gallery-image" src="{{ s.volume_cover_webp }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}" onerror='this.onerror=null; this.src="{{ s.volume_cover }}"'/>
+								{% if forloop.counter0 < 3 %}
+								<img class="gallery-image" src="{{ s.volume_cover }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}" onerror='this.onerror=null; this.src="{{ s.volume_cover }}"'/>
 								{% else %}
-								<img class="gallery-image lazy" data-src="{{ s.volume_cover_webp }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}" /> 
+								<img class="gallery-image lazy" data-src="{{ s.volume_cover }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}" /> 
 								{% endif %}
 							{% endif %}
 							<div class="gallery-caption">
@@ -202,6 +202,9 @@ var reading_button = null;
 									<p class="text-center small text-muted mb-1">{{ value }}</p>
 								{% endfor %}
 								<p class="text-center medium mb-1">{{ s.name }}</p>
+								{% if s.is_nsfw %}
+								<span class="badge badge-danger">NSFW</span>
+								{% endif %}
 							</div>
 						</a>
 					</div>

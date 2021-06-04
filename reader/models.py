@@ -63,6 +63,7 @@ class Series(models.Model):
     )
     scraping_identifiers = models.TextField(blank=True, null=True)
     is_oneshot = models.BooleanField(default=False)
+    is_nsfw = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

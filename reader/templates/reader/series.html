@@ -363,6 +363,9 @@ var reading_button = null;
 	})(updateAllRead);
 
 	window.addEventListener("DOMContentLoaded", () => {
+{% if is_nsfw %}
+		$('#nfsw-modal').modal({backdrop: 'static', keyboard: false});
+{% endif %}
 		listMode("detailed");
 		prettifyLastUpdatedTable();
 		initSearchHandler();
@@ -414,7 +417,6 @@ var reading_button = null;
 		-o-filter: blur(4px);
 		-ms-filter: blur(4px);
 		filter: blur(4px);
-		filter: url("https://gist.githubusercontent.com/amitabhaghosh197/b7865b409e835b5a43b5/raw/1a255b551091924971e7dee8935fd38a7fdf7311/blur".svg#blur);
 		filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='4');
 	}
 
@@ -498,7 +500,7 @@ var reading_button = null;
 	</div>
 </div>
 {% endif %}
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+<div class="modal fade" id="nfsw-modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -508,7 +510,9 @@ var reading_button = null;
         <p>Are you old enough to read it?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default">Get me out of here</button>
+        <form action="/">
+          <button type="submit" class="btn btn-danger">Get me out of here</button>
+        </form>
         <button type="button" class="btn btn-primary" data-dismiss="modal">I am 18+</button>
       </div>
     </div>
@@ -551,8 +555,6 @@ var reading_button = null;
 			</div>
 			<div class="col-lg-8 col-md-7 col-sm-11 col-xs-12 series-content">
 				<article>
-
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">See Modal</button>
 					<h1>{{ series }}</h1>
 					<picture>
 						<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="img-fluid"

@@ -127,11 +127,13 @@ def series_data(include_series=False, include_oneshots=False):
                 "metadata" : [
                     f"Last Updated Ch. {chapter.clean_chapter_number()} - {datetime.utcfromtimestamp(chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d')}"
                     ],
-                "has_cover": volume and volume.volume_cover and volume.volume_cover != ""
+                "has_cover": volume and volume.volume_cover and volume.volume_cover != "",
+                "is_nsfw": chapter.series.is_nsfw
             }
             if volume and a_series_list['has_cover']:
-                a_series_list["volume_cover"] = f"/media/{volume.volume_cover}"
-                a_series_list["volume_cover_webp"] = f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp"
+                volume_cover_webp = f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp"
+                volume_cover_blur = f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}_blur.jpg"
+                a_series_list["volume_cover"] = volume_cover_blur if chapter.series.is_nsfw else volume_cover_webp
                 a_series_list["volume_cover_width"] = int(volume.volume_cover.width)
                 a_series_list["volume_cover_height"] = int(volume.volume_cover.height)
             series_list.append(a_series_list)

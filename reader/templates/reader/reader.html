@@ -43,6 +43,12 @@
   const IS_FIRST_PARTY = {{ first_party|yesno:"true,false,false" }};
   const IS_INDEXED = {{ indexed|yesno:"true,false,false" }};
   const IMAGE_PROXY_URL = "{{ image_proxy_url }}";
+
+{% if is_nsfw %}
+  const IS_NSFW = true;
+{% else %}
+  const IS_NSFW = false;
+{% endif %}
 </script>
 
 <body>

@@ -150,6 +150,7 @@ def series_page_data(series_slug):
             ],
             "synopsis": series.synopsis,
             "author": series.author.name,
+            "is_nsfw": bool(series.is_nsfw),
             "chapter_list": chapter_list,
             "volume_list": sorted(volume_list, key=lambda m: m[0], reverse=True),
             "root_domain": settings.CANONICAL_ROOT_DOMAIN,
@@ -216,6 +217,7 @@ def get_all_metadata(series_slug, slug_chapter_number):
                 "series_name": chapter.series.name,
                 "slug": chapter.series.slug,
                 "author_name": series.author.name,
+                "is_nsfw": bool(series.is_nsfw),
                 "chapter_number": chapter.clean_chapter_number(),
                 "chapter_title": chapter.title,
                 "first_page_url": first_page_url

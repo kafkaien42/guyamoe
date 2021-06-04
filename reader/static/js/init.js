@@ -1,3 +1,4 @@
+
 let mediaMatcher = window.matchMedia("(max-width: 700px)");
 let IS_MOBILE = mediaMatcher.matches;
 let HAS_LOCALSTORAGE = localStorage !== undefined;
@@ -2782,7 +2783,8 @@ function UI_LodaManager(o) {
 		test: new UI_Loda().S.link(this),
 		search: new UI_Loda_Search().S.link(this),
 		settings: new UI_Loda_Settings().S.link(this),
-		jump: new UI_Loda_Jump().S.link(this)
+		jump: new UI_Loda_Jump().S.link(this),
+		nsfw: new UI_Loda_NSFW().S.link(this)
 	}
 
 	this.scrollTop = 0;
@@ -2804,6 +2806,7 @@ function UI_LodaManager(o) {
 
 	this.close = function() {
 		this.$.classList.add('hidden');
+		this.$.classList.remove('nsfw');
 		this.$.innerHTML = '';
 		Reader.$.focus();
 		this.open = false;
@@ -2814,7 +2817,7 @@ function UI_LodaManager(o) {
 		.attach('close', ['Escape'], this.close.bind(this))
 
 	this.$.onmousedown = (e) => {
-		if(e.target == this.$) {
+		if(e.target == this.$ && !this.$.classList.contains('nsfw')) {
 			this.close();
 		}
 	}
@@ -3220,6 +3223,41 @@ function UI_ChapterUnit(o) {
 	this.$.onclick = e => {
 		Reader.initChapter(this.chapter.id, 0);
 		Loda.close();
+	}
+}
+
+function UI_Loda_NSFW(o) {
+	o=be(o);
+	UI_Loda.call(this, {
+		node: o.node,
+		kind: ['Loda_NSFW'].concat(o.kind || []),
+		name: 'NSFW',
+		html: o.html || `<div class="Loda-window UI Loda Loda_NSFW" tabindex="-1">
+			<content class="UI List Selector ContainerList" data-bind="content">
+				<div class="UI Dummy">
+					<header class="setting-header" data-bind="header"></header>
+					<div class="setting-wrapper UI SettingUnit">
+						<p style="text-align: center;">This series is NSFW, are you old enough to read it?</p>
+						<div class="Buttons">
+						<a href="/" class="Button danger">Get me out of here</a>
+						<a href="#" class="Button" data-bind="close">I am 18+</a>
+						</div>
+					</div>
+				</div>
+			</content>
+		</div>`
+
+	});
+	this.focusElement = this.$;
+	this.manager = o.manager;
+	this.name = 'NSFW';
+	this.noPropagation = false;
+
+	this.focus = function() {
+		this.focusElement.focus();
+		if(this.focusElement.select) this.focusElement.select();
+		// Make the background behind the modal opaque, instead of transparent.
+		document.querySelector('.LodaManager').classList.add('nsfw');
 	}
 }
 
@@ -3653,6 +3691,10 @@ ThemeManager.themeUpdated();
 
 if(window.location.hash == '#s') Loda.display('search');
 
+if(IS_NSFW)
+{
+	Loda.display('nsfw')
+}
 
 function debug() {
 	var el = document.createElement('div');

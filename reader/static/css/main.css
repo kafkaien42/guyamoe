@@ -1495,6 +1495,63 @@ _:-webkit-full-screen:not(:root:root), .fit-height_limit .rdr-image-wrap .Reader
 	pointer-events: none;
 }
 
+.Loda_NSFW .Buttons{
+	display: flex;
+	justify-content: center;
+	flex-wrap: nowrap;
+	width: 100%;
+	margin: 0.7rem 0;
+	box-align: center;
+}
+
+.Loda_NSFW .Button {
+  display: inline-block;
+  padding: 0.6em 1.7em;
+  border: 0.1em solid #ffffff;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  color: #ffffff;
+  text-align: center;
+  transition: all 0.2s;
+}
+.Loda_NSFW .Button.danger {
+  background-color: #ea3d38;
+}
+
+.Loda_NSFW .Button:hover {
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.Loda_NSFW .setting-wrapper  {
+	padding: 0.3rem 1rem 1.2rem 1rem;
+	border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+.Loda_NSFW .setting-wrapper:last-child  {
+	border-bottom: none;
+}
+
+.LodaManager.nsfw {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2000;
+	display: flex;
+	overflow: auto;
+	position: fixed;
+	will-change: transform;
+	background-image: url("/static/img/bg_pink.gif");
+	justify-content: center;
+	align-items: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
 .LodaManager {
 	top: 0;
 	left: 0;
@@ -1511,6 +1568,7 @@ _:-webkit-full-screen:not(:root:root), .fit-height_limit .rdr-image-wrap .Reader
 	flex-direction: row;
 	flex-wrap: wrap;
 }
+
 .LodaManager:after {
 	content: '';
 	display: block;
