@@ -131,27 +131,20 @@ def series_data(include_series=False, include_oneshots=False):
                 "is_nsfw": chapter.series.is_nsfw
             }
             if volume and a_series_list['has_cover']:
-                volume_cover_webp = f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}.webp"
-                volume_cover_blur = f"/media/{str(volume.volume_cover).rsplit('.', 1)[0]}_blur.jpg"
+                path, _, ext = str(volume.volume_cover).rpartition('.')
+                volume_cover_webp = f"/media/{path}.webp"
+                volume_cover_blur = f"/media/{path}_blur.{ext}"
                 a_series_list["volume_cover"] = volume_cover_blur if chapter.series.is_nsfw else volume_cover_webp
                 a_series_list["volume_cover_width"] = int(volume.volume_cover.width)
                 a_series_list["volume_cover_height"] = int(volume.volume_cover.height)
             series_list.append(a_series_list)
-            # i +=1
-            # if i > 4:
-            #     break
-        # series_list2 = []
-        # for i, s in enumerate(series_list * 20):
-        #     p = s.copy()
-        #     p['volume_cover_webp'] += str(i)
-        #     series_list2.append(p)
+
         series_page_dt = {
             "series_list": series_list,
             "root_domain": settings.CANONICAL_ROOT_DOMAIN,
             "available_features": [
                 "volumeCovers",
             ],
-            # "reader_modifier": "read/manga",
         }
         cache.set(cache_label, series_page_dt, 3600 * 12)
     return series_page_dt
