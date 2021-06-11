@@ -57,6 +57,13 @@ class SeriesAdmin(admin.ModelAdmin):
          </ul>\n'))
         return form
 
+    def get_readonly_fields(self, request, obj=None):
+        # make slug readonly after creation, this is done because otherwise everything is broken by
+        # changing the slug
+        if obj:
+            return ['slug']
+        else:
+            return []
 
 # def latest_chapter(self, obj):
 
