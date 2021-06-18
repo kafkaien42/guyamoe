@@ -73,6 +73,46 @@ def pre_save_chapter(sender, instance, **kwargs):
             ) + timedelta(days=7)
             instance.series.save()
 
+
+@receiver(post_init, sender=Series)
+def remember_original_series(sender, instance, **kwargs):
+    instance.old_slug = str(instance.slug)
+
+
+@receiver(post_save, sender=Series)
+def post_save_series(sender, instance, **kwargs):
+    if instance.old_slug is not None and instance.old_slug != instance.slug:
+        old_folder = os.path.join(settings.MEDIA_ROOT, "manga", instance.old_slug)
+        new_folder = os.path.join(settings.MEDIA_ROOT, "manga", instance.slug)
+        old_chapters_folder = os.path.join(old_folder, "chapters")
+        new_chapters_folder = os.path.join(new_folder, "chapters")
+        old_volumes_folder = os.path.join(old_folder, "volume_covers")
+
+        # Create new folders
+        os.makedirs(os.path.dirname(new_folder), exist_ok=True)
+
+        # Move the chapters
+        if os.path.exists(old_chapters_folder):
+            shutil.move(old_chapters_folder, new_chapters_folder)
+
+        # Trigger a save on the volume cover, so they are moved into the right place
+        volumes = Volume.objects.filter(series=instance).all()
+        for volume in volumes:
+            if volume.volume_cover:
+                # When we save the volume it triggers the volume post_save procedure, it needs to have the old
+                # slug value to move the file to the right place.
+                volume.old_series_slug = instance.old_slug
+                volume.old_volume_cover = str(volume.volume_cover)
+                volume.old_volume_number = int(volume.volume_number)
+                volume.save()
+
+        # Remove old folders
+        if os.path.exists(old_volumes_folder):
+            os.rmdir(old_volumes_folder)
+        os.rmdir(old_folder)
+    clear_pages_cache()
+
+
 @receiver(post_init, sender=Chapter)
 def remember_original_series_of_chapter(sender, instance, **kwargs):
     instance.old_chapter_number = str(instance.slug_chapter_number()) if instance.chapter_number is not None else None
@@ -101,8 +141,7 @@ def post_save_chapter(sender, instance, **kwargs):
             shutil.move(f"{old_chapter_folder}_shrunk", f"{new_chapter_folder}_shrunk")
             shutil.move(f"{old_chapter_folder}_shrunk_blur", f"{new_chapter_folder}_shrunk_blur")
 
-    if instance.series:
-        clear_pages_cache()
+    clear_pages_cache()
 
 
 @receiver(post_init, sender=Volume)
@@ -137,7 +176,6 @@ def save_volume(sender, instance, **kwargs):
             instance.old_volume_cover = str(instance.volume_cover)
             instance.save()
     elif instance.volume_cover and (instance.old_volume_cover is None or instance.old_volume_cover != instance.volume_cover):
-        # Todo change the cover to a random number otherwise cache will die
         save_dir = os.path.join(os.path.dirname(str(instance.volume_cover)))
         vol_cover = os.path.basename(str(instance.volume_cover))
         for old_data in os.listdir(os.path.join(settings.MEDIA_ROOT, save_dir)):
