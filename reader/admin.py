@@ -58,7 +58,7 @@ class SeriesAdmin(admin.ModelAdmin):
     list_display = ("name", "author")
     search_fields = (
         "name",
-        "author",
+        "author__name",
     )
 
     def get_form(self, request, obj=None, **kwargs):
