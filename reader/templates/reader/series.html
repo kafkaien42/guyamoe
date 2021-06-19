@@ -541,10 +541,14 @@ var reading_button = null;
 					<div class="card-body">
 						<table class="table table-borderless table-sm small">
 							<tbody>
-								{% for type, value in metadata %}
+								{% for type, value, maybe_url in metadata %}
 								<tr>
 									<th>{{ type }}</th>
-									<td class="text-sm">{{ value }}</td>
+									{% if maybe_url %}
+										<td class="text-sm"><a href="{{ maybe_url }}">{{ value }}</a></td>
+									{% else %}
+										<td class="text-sm">{{ value }}</td>
+									{% endif %}
 
 								</tr>
 								{% endfor %}
@@ -564,11 +568,14 @@ var reading_button = null;
 					</picture>
 					<table class="table table-borderless table-sm small" style="display: none;">
 						<tbody>
-							{% for type, value in metadata %}
+							{% for type, value, maybe_url in metadata %}
 							<tr>
 								<th>{{ type }}</th>
-								<td class="text-sm">{{ value }}</td>
-
+								{% if maybe_url %}
+									<td class="text-sm"><a href="{{ maybe_url }}">{{ value }}</a></td>
+								{% else %}
+									<td class="text-sm">{{ value }}</td>
+								{% endif %}
 							</tr>
 							{% endfor %}
 						</tbody>

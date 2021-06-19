@@ -9,11 +9,11 @@ from django.core.cache import cache
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.decorators import decorator_from_middleware
 from django.views.decorators.cache import cache_control
-from django.db.models import Min, F, Max
+from django.db.models import Min, F, Max, Q
 
 from homepage.middleware import ForwardParametersMiddleware
 from reader.middleware import OnlineNowMiddleware
-from reader.models import Chapter, Series, Volume, HitCount
+from reader.models import Chapter, Series, Volume, HitCount, Person
 from reader.views import series_page_data
 from itertools import repeat
 
@@ -89,7 +89,7 @@ def chapters_data():
 
 
 cache_control(public=True, max_age=60, s_maxage=60)
-def series_data(include_series=False, include_oneshots=False):
+def series_data(include_series=False, include_oneshots=False, author_slug=None):
     assert include_series or include_oneshots, "You must include something."
     to_label = {
         (True, True): "ongoing",
@@ -97,14 +97,18 @@ def series_data(include_series=False, include_oneshots=False):
         (True, False): "series",
     }
     cache_label = f"{to_label[(include_series, include_oneshots)]}_page_dt"
+    if author_slug:
+        cache_label += author_slug
     series_page_dt = cache.get(cache_label)
     if not series_page_dt:
         if not include_series or not include_oneshots: 
-            series_latest_uploaded = Chapter.objects.filter(series__is_oneshot=include_oneshots).order_by('series').values('series').annotate(Max('uploaded_on'))
+            only_chapter_from_type = Chapter.objects.filter(series__is_oneshot=include_oneshots)
         else:
-            series_latest_uploaded = Chapter.objects.order_by('series').values('series').annotate(Max('uploaded_on'))
+            only_chapter_from_type = Chapter.objects
+        if author_slug:
+            only_chapter_from_type = only_chapter_from_type.filter(Q(series__author__slug=author_slug) | Q(series__artist__slug=author_slug))
+        series_latest_uploaded = only_chapter_from_type.order_by('series').values('series').annotate(Max('uploaded_on'))
         latest_chapters = Chapter.objects.select_related("series").filter(uploaded_on__in=series_latest_uploaded.values_list('uploaded_on__max', flat=True)).order_by("-uploaded_on")
-
         volumes = Volume.objects.select_related("series").all()
         series_to_first_volume = {}
         for volume in volumes:
@@ -184,6 +188,21 @@ def all_oneshots(request):
     data["version_query"] = settings.STATIC_VERSION
     data["page_title"] = "Oneshots"
     return render(request, "homepage/show_series.html", data)
+
+
+cache_control(public=True, max_age=300, s_maxage=300)
+@decorator_from_middleware(OnlineNowMiddleware)
+def author_series(request, author_slug: str):
+    author_slug = str(author_slug)
+    author = Person.objects.filter(slug=author_slug).first()
+    if author:
+        data = series_data(include_series=True, include_oneshots=True, author_slug=author_slug)
+        data["version_query"] = settings.STATIC_VERSION
+        data["page_title"] = f"{author.name} | All Series"
+        data["available_features"].append("title")
+        data["author"] = str(author.name)
+        return render(request, "homepage/show_series.html", data)
+    return render(request, "homepage/how_cute_404.html", status=404)
 
 
 @cache_control(public=True, max_age=3600, s_maxage=300)

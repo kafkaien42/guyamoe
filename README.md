@@ -110,6 +110,7 @@ Relevant URLs (as of now):
 - `/admin_home` - admin endpoint for clearing the site's cache
 - `/reader/series/<series_slug_name>` - series info and all chapter links
 - `/reader/series/<series_slug_name>/<chapter_number>/<page_number>` - url scheme for reader opened on specfied page of chapter of series.
+- `/author/<author_slug_name>` - All series from that author/artist
 - `/api/series/<series_slug_name>` - all series data requested by reader frontend
 - `/media/manga/<series_slug_name>/<chapter_number>/<page_file_name>` - url scheme to used by reader to actual page as an image.
 

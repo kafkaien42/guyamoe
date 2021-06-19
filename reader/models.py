@@ -5,6 +5,7 @@ from random import randint
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django_extensions.db.fields import AutoSlugField
 
 MANGADEX = "MD"
 SCRAPING_SOURCES = ((MANGADEX, "MangaDex"),)
@@ -19,9 +20,14 @@ class HitCount(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=200)
+    # slug = models.SlugField(unique=True, max_length=200, db_index=True)
+    slug = AutoSlugField(null=True, default=None, unique=True, db_index=True, editable=True, populate_from='name')
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return f"/author/{self.slug}/"
 
 
 class Group(models.Model):

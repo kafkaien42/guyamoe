@@ -1,6 +1,11 @@
 {% extends "layout.html" %}
 {% load static %}
 
+{% block meta %}
+{% if author %}
+<meta name="author" content="{{ author }}" />
+{% endif %}
+{% endblock %}
 {% block footer %}
 <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js"></script>
 <script defer>
@@ -184,6 +189,11 @@ var reading_button = null;
 							class="fa fa-rss"></i></a>
 					{% endif %}
 				</div>
+				{% if "title" in available_features %}
+				<article>
+					<h1 style="text-align: center;">Series and oneshots by {{ author }}</h1>
+				</article>
+				{% endif %}
 				{% if "volumeCovers" in available_features %}
 				<div class="container-fluid" id="volumeCoversView">
 					<!-- onerror='this.onerror=null; this.src="{{ s.volume_cover }}"' -->

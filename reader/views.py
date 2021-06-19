@@ -140,12 +140,13 @@ def series_page_data(series_slug):
             "cover_vol_width": int(cover_vol_width_height[0]),
             "cover_vol_height": int(cover_vol_width_height[1]),
             "metadata": [
-                ["Author", series.author.name],
-                ["Artist", series.artist.name],
-                ["Views", hit.hits + 1],
+                ["Author", series.author.name, series.author.get_absolute_url()],
+                ["Artist", series.artist.name, series.artist.get_absolute_url()],
+                ["Views", hit.hits + 1, None],
                 [
                     "Last Updated",
                     f"Ch. {latest_chapter.clean_chapter_number() if latest_chapter else ''} - {datetime.utcfromtimestamp(latest_chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d') if latest_chapter else ''}",
+                    None,
                 ],
             ],
             "synopsis": series.synopsis,

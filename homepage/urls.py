@@ -7,6 +7,7 @@ from . import views
 
 urlpatterns = [
     path("", views.all_ongoing, name="site-home"),
+    re_path(r"^author/(?P<author_slug>[\w-]+)/$", views.author_series, name="author-series"),
     path("series/", views.all_series, name="site-series"),
     path("oneshots/", views.all_oneshots, name="site-oneshots"),
     path("latest_chapters/", views.all_chapters, name="site-chapters"),

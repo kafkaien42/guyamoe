@@ -7,7 +7,7 @@ from .forms import ChapterForm, SeriesForm
 from .models import Chapter, Group, HitCount, Person, Series, Volume
 
 
-# Register your models here.
+
 class HitCountAdmin(admin.ModelAdmin):
     ordering = ("hits",)
     list_display = (
@@ -25,9 +25,22 @@ class HitCountAdmin(admin.ModelAdmin):
         else:
             return obj
 
-
 admin.site.register(HitCount, HitCountAdmin)
-admin.site.register(Person)
+
+
+class PersonAdmin(admin.ModelAdmin):
+    ordering = ("name",)
+    list_display = (
+        "name",
+        "slug",
+    )
+    search_fields = (
+        "name",
+        "slug",
+    )
+
+
+admin.site.register(Person, PersonAdmin)
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -42,7 +55,11 @@ admin.site.register(Group, GroupAdmin)
 
 class SeriesAdmin(admin.ModelAdmin):
     form = SeriesForm
-    list_display = ("name" ,)
+    list_display = ("name", "author")
+    search_fields = (
+        "name",
+        "author",
+    )
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
