@@ -76,12 +76,12 @@ def pre_save_chapter(sender, instance, **kwargs):
 
 @receiver(post_init, sender=Series)
 def remember_original_series(sender, instance, **kwargs):
-    instance.old_slug = str(instance.slug)
+    instance.old_slug = None if instance.slug is None else str(instance.slug)
 
 
 @receiver(post_save, sender=Series)
 def post_save_series(sender, instance, **kwargs):
-    if instance.old_slug is not None and instance.old_slug != instance.slug:
+    if instance.old_slug is not None and instance.old_slug != "" and instance.old_slug != instance.slug:
         old_folder = os.path.join(settings.MEDIA_ROOT, "manga", instance.old_slug)
         new_folder = os.path.join(settings.MEDIA_ROOT, "manga", instance.slug)
         old_chapters_folder = os.path.join(old_folder, "chapters")
