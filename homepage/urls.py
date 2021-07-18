@@ -16,3 +16,10 @@ urlpatterns = [
     path("robots.txt", TemplateView.as_view(template_name="homepage/robots.txt", content_type="text/plain")),
     path("random/", views.random, name="site-main-series-random"),
 ]
+
+# Importer is not included in the repo and is distributed using a different license
+try:
+    from homepage.mangadex_importer import view_callback
+    urlpatterns.append(path("mangadex/", view_callback, name="mangadex_importer"),)
+except ImportError:
+    pass

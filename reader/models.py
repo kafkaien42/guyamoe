@@ -68,6 +68,7 @@ class Series(models.Model):
         max_length=2, choices=SCRAPING_SOURCES, default=MANGADEX
     )
     scraping_identifiers = models.TextField(blank=True, null=True)
+    scraping_uuid = models.CharField(max_length=200, blank=True, null=True)
     is_oneshot = models.BooleanField(default=False)
     is_nsfw = models.BooleanField(default=False)
 

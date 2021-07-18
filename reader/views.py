@@ -120,9 +120,8 @@ def series_page_data(series_slug):
                 "detailed",
                 "rss",
                 "download",
+                "volumeCovers",
             ]
-        if len(volume_list) > 1:
-            available_features += ["volumeCovers"]
         if len(chapter_list) > 5:
             available_features += ["compact"]
         series_page_dt = {
