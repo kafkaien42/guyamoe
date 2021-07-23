@@ -88,6 +88,10 @@ def series_page_data(series_slug):
                     chapter_dict[ch_clean] = [chapter_dict[ch_clean][0], True]
             else:
                 chapter_dict[ch_clean] = [chapter, False]
+
+        chapter_content_type = ContentType.objects.get(app_label="reader", model="chapter")
+        chapters_hit_count = HitCount.objects.filter(content_type=chapter_content_type).all()
+        id_to_hit_count = {int(hit_count.object_id) : int(hit_count.hits) for hit_count in chapters_hit_count}
         for ch in chapter_dict:
             chapter, multiple_groups = chapter_dict[ch]
             u = chapter.uploaded_on
@@ -100,6 +104,7 @@ def series_page_data(series_slug):
                     chapter.group.name if not multiple_groups else "Multiple Groups",
                     [u.year, u.month - 1, u.day, u.hour, u.minute, u.second],
                     chapter.volume or "null",
+                    id_to_hit_count.get(int(chapter.id), 0)
                 ]
             )
             volume_dict[chapter.volume].append(

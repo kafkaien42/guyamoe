@@ -34,6 +34,7 @@ def admin_home(request):
         },
     )
 
+
 cache_control(public=True, max_age=60, s_maxage=60)
 def chapters_data():
     chapters_page_dt = cache.get(f"chapters_page_dt")

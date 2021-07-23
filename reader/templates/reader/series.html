@@ -653,6 +653,7 @@ var reading_button = null;
 									Title&nbsp;&nbsp;&nbsp;&nbsp;<input class="form-control-sm" id="chapterTitleSearch"
 										type="text" placeholder="⌕ Search" />
 								</th>
+								<th scope="col">Views</th>
 								<th scope="col">Group</th>
 								<th scope="col">Last Updated</th>
 								{% if "download" in available_features %}
@@ -663,7 +664,7 @@ var reading_button = null;
 							</tr>
 						</thead>
 						<tbody id="chapterTable">
-							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume in chapter_list %}
+							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, hit_counts in chapter_list %}
 							<tr class="table-default" data-chapter="{{ chapter }}">
 								<td scope="row" class="read-icon" onclick="updateRead('{{ chapter }}')"></td>
 								<td scope="row" class="chapter-title">
@@ -677,6 +678,7 @@ var reading_button = null;
 										{{ title }}
 									</a>
 								</td>
+								<td scope="row">{{ hit_counts }}</td>
 								<td scope="row">{{ group }}</td>
 								<td scope="row" class="detailed-chapter-upload-date">{{ upload_date }}</td>
 								{% if "download" in available_features %}
