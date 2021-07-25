@@ -20,6 +20,41 @@
         }
     });
  }
+ function updateSlug() {
+    if ($('#seriesSlug').val() === '')
+    {
+        $('#seriesSlug').val($('#seriesTitle').val()
+        .toLowerCase()
+        .replace(/ /g,'-')
+        .replace(/[^\w-]+/g,'')
+        );
+    }
+ }
+ window.addEventListener("load", () => {
+		document.getElementById("submitForm").addEventListener("click", (e) => {
+			e.preventDefault();
+			document.getElementById("modalSubmit").insertAdjacentHTML("afterbegin", `<div id="uploadingChapter" class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>`);
+			let formElement = document.getElementById("newChapterForm");
+			let formData = new FormData(formElement);
+			formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+			fetch("/api/upload_new_oneshot/", {
+				method: 'POST',
+				body: formData
+			}).then(data => data.json()).then(data => {
+				document.getElementById("uploadingChapter").remove();
+				if (data["response"] === "success") {
+					document.getElementById("modalSubmit").insertAdjacentHTML("afterbegin", `<div id="uploadResult" class="btn btn-success"><i class="fa fa-check"></i></div>`);
+				} else {
+					document.getElementById("modalSubmit").insertAdjacentHTML("beforebegin", `<p id="uploadResult">Error uploading chapter.</p>`);
+				}
+				setTimeout(() => document.getElementById("uploadResult").remove(), 5000);
+			}).catch(e => {
+				document.getElementById("uploadingChapter").remove();
+				document.getElementById("modalSubmit").insertAdjacentHTML("beforebegin", `<p id="uploadResult">Unspecified error, the chapter may be partially uploaded.</p>`);
+				setTimeout(() => document.getElementById("uploadResult").remove(), 5000);
+			});
+		});
+	});
 </script>
 {% endblock %}
 {% block body %}
@@ -32,8 +67,109 @@
                 <p class="mt-4">Peak traffic: {{ peak_traffic }}</p>
             </div>
             <button class="btn btn-primary mt-3 mt-2 ml-3 " onclick="clearCache('all')">Clear all cache</button>
-    <button class="btn btn-primary mt-3 mt-2 ml-3 " onclick="clearCache('chapter')">Clear series cache</button>
+            <button class="btn btn-primary mt-3 mt-2 ml-3 " onclick="clearCache('chapter')">Clear series cache</button>
+            <button class="btn btn-primary mt-3 mt-2 ml-3 " data-toggle="modal" data-target="#uploadModal">Upload Oneshot Quickly</button>
         </div>
-    
+</div>
+<div class="modal" id="uploadModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 id="formVal1" class="modal-title">Upload New Oneshot and a New Chapter</h4>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<form id="newChapterForm">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-12">
+							<label for="seriesTitle" class="d-block" >Series Title</label>
+							<input required type="text" class="form-control-sm col-12" name="seriesTitle" id="seriesTitle" onchange="updateSlug()">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<label for="seriesSlug" class="d-block" >Series slug</label>
+							<input required type="text" class="form-control-sm col-12" name="seriesSlug" id="seriesSlug">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<label for="alternativeTitles" class="d-block" >Alternative Titles</label>
+                            <textarea class="form-control-sm col-12" name="alternativeTitles" id="alternativeTitles"> </textarea>
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="col-7">
+							<label for="author" >Author/Artist</label>
+							<div class="input-group">
+								<select required class="form-control-sm" name="author" id="author">
+                                    {% for author in authors %}
+                                    <option value="{{ author }}">{{ author }}</option>
+                                    {% endfor %}
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="col-6">
+							<label for="isOneshot" >Is a oneshot?</label>
+							<input type="checkbox" class="form-control-sm col-12" name="isOneshot" id="isOneshot" value="oneshot" checked />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<label for="synopsis" class="d-block" >Synopsis</label>
+                            <textarea class="form-control-sm col-12" rows="4"  name="synopsis" id="synopsis" placeholder="Once upon a time a pink hair girl received a magical amulet from a cat."> </textarea>
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="col">
+							<label for="seriesCover">Cover for the Oneshot (.png, .jpg, ...)</label>
+							<input required type="file" name="seriesCover" id="seriesCover">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-5">
+							<label for="chapterNumber" >Chapter Number</label>
+							<input required type="number" step="1.0" class="form-control-sm col-6" name="chapterNumber" id="chapterNumber" value="0">
+						</div>
+						<div class="col-3">
+							<label for="volumeNumber" >Volume</label>
+							<input required type="number" step="1.0" class="form-control-sm col-8" name="volumeNumber" id="volumeNumber" value="0">
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="col-7">
+							<label for="scanGroup" >Group</label>
+							<div class="input-group">
+								<select required class="form-control-sm" name="scanGroup" id="scanGroup">
+                                    {% for group in groups %}
+                                    <option value="{{ group }}">{{ group }}</option>
+                                    {% endfor %}
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="col-12">
+							<label for="chapterTitle" class="d-block" >Chapter Title</label>
+							<input required type="text" class="form-control-sm col-12" name="chapterTitle" id="chapterTitle">
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="col">
+							<label for="chapterPages">Chapter Pages (as .zip)</label>
+							<input required type="file" accept=".zip" name="chapterPages" class="form-control-file" id="chapterPages">
+						</div>
+					</div>
+					<input type="hidden" name="slug" value="{{ slug }}">
+				</div>
+				<div id="modalSubmit" class="modal-footer">
+					<button type="button" id="submitForm" class="btn btn-primary">Create Oneshot and Upload Chapter (100MB max)</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 {% endblock %}

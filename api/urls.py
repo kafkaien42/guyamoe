@@ -25,6 +25,11 @@ urlpatterns = [
         name="api-chapter-upload",
     ),
     re_path(
+        r"^upload_new_oneshot/",
+        views.upload_new_oneshot,
+        name="api-new-oneshot",
+    ),
+    re_path(
         r"^get_volume_covers/(?P<series_slug>[\w-]+)/",
         views.get_volume_covers,
         name="api-get-volume-covers",

@@ -12,7 +12,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
-from reader.models import Chapter, ChapterIndex, Group, Series, Volume
+from reader.models import Chapter, ChapterIndex, Group, Series, Volume, Person
 from reader.users_cache_lib import get_user_ip
 
 from .api import (
@@ -190,6 +190,33 @@ def upload_new_chapter(request, series_slug):
         return HttpResponse(
             json.dumps({"response": "success"}), content_type="application/json"
         )
+    else:
+        return HttpResponse(
+            json.dumps({"response": "failure"}), content_type="application/json"
+        )
+
+
+def upload_new_oneshot(request):
+    if request.method == "POST" and request.user and request.user.is_staff:
+        author_name = request.POST["author"]
+        author = Person.objects.filter(name=author_name).all()[0]
+        slug = request.POST["seriesSlug"]
+
+        series = Series.objects.create(
+            name=request.POST["seriesTitle"],
+            slug=slug,
+            author=author,
+            artist=author,
+            synopsis=request.POST["synopsis"],
+            alternative_titles=request.POST["alternativeTitles"],
+            scraping_enabled=False,
+            is_oneshot=(request.POST['isOneshot'] == "oneshot")
+        )
+
+        if "seriesCover" in request.FILES:
+            Volume.objects.create(volume_number=request.POST["volumeNumber"], series=series, volume_cover=request.FILES["seriesCover"])
+
+        return upload_new_chapter(request, slug)
     else:
         return HttpResponse(
             json.dumps({"response": "failure"}), content_type="application/json"
