@@ -480,9 +480,17 @@ var reading_button = null;
 					<div class="row mt-4">
 						<div class="col-12">
 							<label for="chapterTitle" class="d-block" >Chapter Title</label>
-							<input required type="text" class="form-control-sm col-12" name="chapterTitle" id="chapterNumber">
+							<input required type="text" class="form-control-sm col-12" name="chapterTitle" id="chapterTitle">
 						</div>
 					</div>
+					{% if discord_notification_enabled %}
+					<div class="row mt-4">
+						<div class="col">
+							<input type="checkbox" class="form-control-sm" name="notifyOnDiscord" id="notifyOnDiscord" value="notify" checked/>
+							<label for="notifyOnDiscord">Send Discord Notification?</label>
+						</div>
+					</div>
+					{% endif %}
 					<div class="row mt-4">
 						<div class="col">
 							<label for="chapterPages">Chapter Pages (as .zip)</label>

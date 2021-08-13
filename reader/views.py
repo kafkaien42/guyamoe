@@ -162,6 +162,7 @@ def series_page_data(series_slug):
             "relative_url": f"read/manga/{series.slug}/",
             "available_features": available_features,
             "reader_modifier": "read/manga",
+            "discord_notification_enabled": settings.DISCORD_WEBHOOK_TOKEN != "",
         }
         cache.set(f"series_page_dt_{series_slug}", series_page_dt, 3600 * 12)
     return series_page_dt
@@ -198,25 +199,7 @@ def get_all_metadata(series_slug, slug_chapter_number):
             if chapter.slug_chapter_number() != slug_chapter_number:
                 continue
 
-            chapter_folder_path = os.path.join(
-                "manga", series_slug, "chapters", chapter.folder, str(chapter.group.id)
-            )
-            # Use this if our png are not optimized enough and it is eating up our bandwidth
-            # chapter_folder_path = os.path.join(
-            #     "manga", series_slug, "chapters", chapter.folder, str(chapter.group.id) + "_shrunk"
-            # )
-
-
-            query_string = "" if not chapter.version else f"?v{chapter.version}"
-            filenames = sorted(
-                [
-                    u + query_string
-                    for u in os.listdir(
-                        os.path.join(settings.MEDIA_ROOT, chapter_folder_path)
-                    )
-                ]
-            )
-            first_page_url = settings.MEDIA_URL + os.path.join(chapter_folder_path, filenames[0])
+            first_page_url = chapter.first_page_absolute_url()
 
             series_metadata[chapter.slug_chapter_number()] = {
                 "series_name": chapter.series.name,

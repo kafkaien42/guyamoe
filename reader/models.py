@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timezone
 from random import randint
 
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -91,6 +92,7 @@ def new_volume_folder(instance):
         str(instance.volume_number),
     )
 
+
 def new_volume_path_file_name(instance, filename):
     _, ext = os.path.splitext(filename)
     new_filename = str(randint(10000, 99999)) + ext
@@ -179,6 +181,25 @@ class Chapter(models.Model):
     def get_absolute_url(self):
         return f"/read/manga/{self.series.slug}/{Chapter.slug_chapter_number(self)}/1/"
 
+    def first_page_absolute_url(self):
+        chapter_folder_path = os.path.join(
+            "manga", self.series.slug, "chapters", self.folder, str(self.group.id)
+        )
+        # Use this if our png are not optimized enough and it is eating up our bandwidth
+        # chapter_folder_path = os.path.join(
+        #     "manga", series_slug, "chapters", chapter.folder, str(chapter.group.id) + "_shrunk"
+        # )
+
+        query_string = "" if not self.version else f"?v{self.version}"
+        filenames = sorted(
+            [
+                u + query_string
+                for u in os.listdir(
+                    os.path.join(settings.MEDIA_ROOT, chapter_folder_path)
+                )
+            ]
+        )
+        return settings.MEDIA_URL + os.path.join(chapter_folder_path, filenames[0])
     class Meta:
         ordering = ("chapter_number",)
         unique_together = (

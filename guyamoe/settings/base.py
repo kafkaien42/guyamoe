@@ -154,8 +154,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID", "")
-MAIL_DISCORD_WEBHOOK_ID = int(os.environ.get("MAIL_DISCORD_WEBHOOK_ID", 1))
-MAIL_DISCORD_WEBHOOK_TOKEN = os.environ.get("MAIL_DISCORD_WEBHOOK_TOKEN", "")
+DISCORD_WEBHOOK_ID = int(os.environ.get("DISCORD_WEBHOOK_ID", 1))
+DISCORD_WEBHOOK_TOKEN = os.environ.get("DISCORD_WEBHOOK_TOKEN", "")
+DISCORD_USERNAME = "Danke.moe"
+DISCORD_MESSAGE = "If you found an issue with this release <:bonk:807730387115442257>, share it on <#827791441749213204>"
 
 BRANDING_NAME = "Danke fürs Lesen"
 BRANDING_DESCRIPTION = "Thank you for reading! A circle that works on random twitter and pixiv one-shots and the occasional cute manga."

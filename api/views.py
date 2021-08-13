@@ -175,6 +175,35 @@ def save_zip_file(input_zip_file, chapter_folder, group_folder):
                 f.write(zip_file.read(page))
 
 
+def post_release_to_discord(uri_scheme: str, chapter):
+    webhook = Webhook.partial(
+        settings.DISCORD_WEBHOOK_ID,
+        settings.DISCORD_WEBHOOK_TOKEN,
+        adapter=RequestsWebhookAdapter(),
+    )
+    print(settings.DISCORD_WEBHOOK_ID,
+        settings.DISCORD_WEBHOOK_TOKEN)
+    url = f"\n{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.get_absolute_url()}"
+    series_url = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.series.get_absolute_url()}"
+    author_url = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.series.author.get_absolute_url()}"
+    chapter_1st_image = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.first_page_absolute_url()}"
+    site_log_url = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}/static/logo-mt-squared-small.png"
+
+    em = Embed(
+        color=0x000000,
+        title=f"New Release!  Chapter {chapter.clean_chapter_number()} (v{chapter.version}) of {chapter.series.name}",
+        description=f"{url}\n\n"
+                    f"[Read other chapters]({series_url})\n"
+                    f"[Read other series by this author]({author_url})\n\n"
+                    f"{settings.DISCORD_MESSAGE}",
+        url=url,
+        timestamp=datetime.utcnow(),
+    )
+    em.set_author(name=f"{chapter.series.author.name}", url=author_url)
+    em.set_image(url=chapter_1st_image)
+    webhook.send(content=f"@here", embed=em, username=settings.DISCORD_USERNAME, avatar_url=site_log_url)
+
+
 def upload_new_chapter(request, series_slug):
     if request.method == "POST" and request.user and request.user.is_staff:
         group = Group.objects.get(name=request.POST["scanGroup"])
@@ -187,6 +216,8 @@ def upload_new_chapter(request, series_slug):
         )
         save_zip_file(request.FILES["chapterPages"], chapter_folder, group_folder)
         chapter_post_process(ch_obj, is_update=is_update)
+        if "notifyOnDiscord" in request.POST and settings.DISCORD_WEBHOOK_TOKEN and request.POST["notifyOnDiscord"]:
+            post_release_to_discord(request.scheme, ch_obj)
         return HttpResponse(
             json.dumps({"response": "success"}), content_type="application/json"
         )
