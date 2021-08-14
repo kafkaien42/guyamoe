@@ -5,18 +5,21 @@ Generalized manga reading framework for scanlation groups. This is a fork of [Gu
 Difference from the original:
  - You should only need to update `about.html`, `layout.html`, `base.py`, `prod.py` and of course the logos to have a functional website for you scanlation group.
  - Remove hardcoded reference to Kaguya-sama in source code. The website will work even if there is no manga in the database.
- - Add a homepage where the series are shown as a gallery.
- - Add a page to see the list of chapters from all series.
- - In embbedded link to chapters a preview of the first page is shown, instead of the site's logo.
- - Sitemap.xml works even if you don't have pages.
+ - Add a homepage where the series are shown as a gallery
+ - Add a page to see the list of chapters from all series
+ - Add a page that list all the series from an artist/author
+ - Can mark a chapter as NSFW to get a age warnings popup
+ - Can post a message to a Discord channel when a new chapter is uploaded
+ - Sitemap.xml works even if you don't have pages
+ - In embedded link to chapters a preview of the first page is shown, instead of the site's logo
 
 
-⚠ **Note:** The install instructions below will not result in a general purpose CMS due to the amount of hardcoded assets.
+⚠ **Note:** These instructions below will not result in a general purpose CMS due to the amount of hardcoded assets.
 
 ⚠ **Important:** Please don't use this framework to run ads.
 
 Limitations:
- - This is not a a generalized CMS!
+ - This is not a generalized CMS!
  - Only one unique numbered chapter per scanlation group per series.
  - No multilingual support, so you cannot have the same chapter in different languages.
  - Only one group assigned to each chapter. One work around for collaborations is to create a group with the name of both groups.
