@@ -181,17 +181,17 @@ def post_release_to_discord(uri_scheme: str, chapter):
         settings.DISCORD_WEBHOOK_TOKEN,
         adapter=RequestsWebhookAdapter(),
     )
-    print(settings.DISCORD_WEBHOOK_ID,
-        settings.DISCORD_WEBHOOK_TOKEN)
-    url = f"\n{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.get_absolute_url()}"
-    series_url = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.series.get_absolute_url()}"
-    author_url = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.series.author.get_absolute_url()}"
-    chapter_1st_image = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}{chapter.first_page_absolute_url()}"
-    site_log_url = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}/static/logo-mt-squared-small.png"
+    root = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}"
+    url = f"{root}{chapter.get_absolute_url()}"
+    series_url = f"{root}{chapter.series.get_absolute_url()}"
+    author_url = f"{root}{chapter.series.author.get_absolute_url()}"
+    chapter_1st_image = f"{root}{chapter.first_page_absolute_url()}"
+    site_log_url = f"{root}/static/logo-mt-squared-small.png"
+    version_label = f"(v{chapter.version})" if chapter.version else "(v1)"
 
     em = Embed(
         color=0x000000,
-        title=f"New Release!  Chapter {chapter.clean_chapter_number()} (v{chapter.version}) of {chapter.series.name}",
+        title=f"New Release!  Chapter {chapter.clean_chapter_number()} {version_label} of {chapter.series.name}",
         description=f"{url}\n\n"
                     f"[Read other chapters]({series_url})\n"
                     f"[Read other series by this author]({author_url})\n\n"
@@ -201,7 +201,10 @@ def post_release_to_discord(uri_scheme: str, chapter):
     )
     em.set_author(name=f"{chapter.series.author.name}", url=author_url)
     em.set_image(url=chapter_1st_image)
-    webhook.send(content=f"@here", embed=em, username=settings.DISCORD_USERNAME, avatar_url=site_log_url)
+
+    # Only ping if it is the first version of the chapter
+    ping_str = None if chapter.version else settings.DISCORD_PING
+    webhook.send(content=ping_str, embed=em, username=settings.DISCORD_USERNAME, avatar_url=site_log_url)
 
 
 def upload_new_chapter(request, series_slug):

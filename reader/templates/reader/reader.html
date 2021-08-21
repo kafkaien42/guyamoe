@@ -46,6 +46,7 @@
   const IS_FIRST_PARTY = {{ first_party|yesno:"true,false,false" }};
   const IS_INDEXED = {{ indexed|yesno:"true,false,false" }};
   const IMAGE_PROXY_URL = "{{ image_proxy_url }}";
+  const ENABLE_DOWNLOAD = {{ can_download|yesno:"true,false,false" }};
 
 {% if is_nsfw %}
   const IS_NSFW = true;
@@ -73,13 +74,15 @@
             <button data-bind='vol_next' class="rdr-selector-vol ico-btn prev"
               data-tip="Previous volume"></button>
             <div class="flex-spacer" data-bind='message'></div>
-            <button data-bind="download_chapter" class="ico-btn download"></button>
-            <div class="download-anchor">
-              <div class="download-wrapper hidden" data-bind="download_wrapper">
-                <button data-bind="downloading_chapter" class="ico-btn downloading" disabled></button>
-                <button data-bind="download_cancel" class="ico-btn download-cancel"></button>
+            {% if can_download %}
+              <button data-bind="download_chapter" class="ico-btn download"></button>
+              <div class="download-anchor">
+                <div class="download-wrapper hidden" data-bind="download_wrapper">
+                  <button data-bind="downloading_chapter" class="ico-btn downloading" disabled></button>
+                  <button data-bind="download_cancel" class="ico-btn download-cancel"></button>
+                </div>
               </div>
-            </div>
+            {% endif %}
             <a data-bind='share_button' data-tip="Short link to current page"
               class="rdr-share ico-btn "></a>
             <!-- <a data-bind='comment_button' data-tip="Comments" class="rdr-comment ico-btn"></a> -->

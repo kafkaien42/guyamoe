@@ -86,10 +86,11 @@ def chapters_data():
             "available_features": [
                 "detailed",
                 "rss",
-                "download",
             ],
             "reader_modifier": "read/manga",
         }
+        if settings.ALLOWS_DOWNLOAD_AS_ZIP:
+            chapters_page_dt["available_features"].append("download")
         cache.set(f"chapters_page_dt", chapters_page_dt, 3600 * 12)
     return chapters_page_dt
 

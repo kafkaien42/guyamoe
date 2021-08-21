@@ -124,9 +124,10 @@ def series_page_data(series_slug):
         available_features = [
                 "detailed",
                 "rss",
-                "download",
                 "volumeCovers",
             ]
+        if settings.ALLOWS_DOWNLOAD_AS_ZIP:
+            available_features += ["download"]
         if len(chapter_list) > 5:
             available_features += ["compact"]
         series_page_dt = {
@@ -225,6 +226,7 @@ def reader(request, series_slug, chapter, page=None):
             data[chapter]["version_query"] = settings.STATIC_VERSION
             data[chapter]["first_party"] = True
             data[chapter]["indexed"] = data["indexed"]
+            data[chapter]["can_download"] = settings.ALLOWS_DOWNLOAD_AS_ZIP
             return render(request, "reader/reader.html", data[chapter])
         else:
             return render(request, "homepage/how_cute_404.html", status=404)

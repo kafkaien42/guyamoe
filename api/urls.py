@@ -1,4 +1,5 @@
 from django.urls import path, re_path
+from django.conf import settings
 
 from api import views
 
@@ -14,11 +15,6 @@ urlpatterns = [
     ),
     re_path(r"^get_all_groups/", views.get_all_groups, name="api-all-groups"),
     # re_path(r'^download_volume/(?P<series_slug>[\w-]+)/(?P<volume>[\d]{1,9})', views.download_volume, name='api-volume-chapters-download'),
-    re_path(
-        r"^download_chapter/(?P<series_slug>[\w-]+)/(?P<chapter>[\d-]{1,9})/$",
-        views.download_chapter,
-        name="api-chapter-download",
-    ),
     re_path(
         r"^upload_new_chapter/(?P<series_slug>[\w-]+)/",
         views.upload_new_chapter,
@@ -42,3 +38,12 @@ urlpatterns = [
     re_path(r"clear_cache/", views.clear_cache, name="api-clear-cache"),
     re_path(r"^black_hole_mail/", views.black_hole_mail, name="api-black-hole-mail"),
 ]
+
+if settings.ALLOWS_DOWNLOAD_AS_ZIP:
+    urlpatterns.append(
+        re_path(
+            r"^download_chapter/(?P<series_slug>[\w-]+)/(?P<chapter>[\d-]{1,9})/$",
+            views.download_chapter,
+            name="api-chapter-download",
+        )
+    )

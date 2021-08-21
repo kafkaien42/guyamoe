@@ -1685,8 +1685,12 @@ function UI_Reader(o) {
 	this._.share_button.onmousedown = e => this.copyShortLink(e);
 	this._.search.onclick = e => Loda.display('search');
 	this._.jump.onclick = e => Loda.display('jump');
-	this._.download_chapter.onclick = () => DownloadManagerObj.downloadChapter();
-	this._.download_cancel.onclick = () => DownloadManagerObj.cancelDownload();
+
+    if (ENABLE_DOWNLOAD)
+    {
+        this._.download_chapter.onclick = () => DownloadManagerObj.downloadChapter();
+        this._.download_cancel.onclick = () => DownloadManagerObj.cancelDownload();
+    }
 	this._.random_chapter_button.addEventListener('mousedown', e => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -1694,7 +1698,7 @@ function UI_Reader(o) {
 		return false;
 	}, false)
 
-	Tooltippy
+	tooltippy = Tooltippy
 		.attach(this._.chap_prev, 'Previous chapter [[]')
 		.attach(this._.chap_next, 'Next chapter []]')
 		.attach(this._.vol_prev, 'Previous volume [,]')
@@ -1710,7 +1714,6 @@ function UI_Reader(o) {
 		.attach(this._.jump, 'Jump to chapter... [J]')
 		.attach(this._.spread_button, 'Change two-page mode [Q]')
 		.attach(this._.settings_button, 'Advanced settings... [O]')
-		.attach(this._.download_chapter, 'Download chapter in the background')
 		//.attach(this._.comment_button, 'Go to comments [C]')
 		// .attach(this._.fit_none, 'Images are displayed in natural resolution.')
 		// .attach(this._.fit_all, 'Images expand to width or height.')
@@ -1721,6 +1724,11 @@ function UI_Reader(o) {
 		// .attach(this._.fit_height_limit, 'Natural image size that does not exceed max height.')
 		// .attach(this._.zoom_level_plus, 'Increase zoom level')
 		// .attach(this._.zoom_level_minus, 'Decrease zoom level')
+
+    if (ENABLE_DOWNLOAD)
+    {
+		tooltippy.attach(this._.download_chapter, 'Download chapter in the background')
+	}
 
 	this.S.mapIn({
 		seriesUpdated: this.updateData,

@@ -152,12 +152,14 @@ STATIC_VERSION = "?v=" + subprocess.check_output(
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+ALLOWS_DOWNLOAD_AS_ZIP = False
 
 IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID", "")
 DISCORD_WEBHOOK_ID = int(os.environ.get("DISCORD_WEBHOOK_ID", 1))
 DISCORD_WEBHOOK_TOKEN = os.environ.get("DISCORD_WEBHOOK_TOKEN", "")
 DISCORD_USERNAME = "Danke.moe"
-DISCORD_MESSAGE = "If you found an issue with this release <:bonk:807730387115442257>, share it on <#827791441749213204>"
+DISCORD_PING = "<@&796228557256654858>"  # @Quality Control/Proofreading, to find that code, enter \@therole on discord
+DISCORD_MESSAGE = "If you found an issue with this release <:bonk:807730387115442257>, share it on <#875807668390993920>"
 
 BRANDING_NAME = "Danke fürs Lesen"
 BRANDING_DESCRIPTION = "Thank you for reading! A circle that works on random twitter and pixiv one-shots and the occasional cute manga."
