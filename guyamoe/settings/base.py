@@ -152,7 +152,7 @@ STATIC_VERSION = "?v=" + subprocess.check_output(
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-ALLOWS_DOWNLOAD_AS_ZIP = False
+ALLOWS_DOWNLOAD_AS_ZIP = True
 
 IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID", "")
 DISCORD_WEBHOOK_ID = int(os.environ.get("DISCORD_WEBHOOK_ID", 1))
