@@ -10,6 +10,7 @@ urlpatterns = [
     re_path(r"^author/(?P<author_slug>[\w-]+)/$", views.author_series, name="author-series"),
     path("series/", views.all_series, name="site-series"),
     path("oneshots/", views.all_oneshots, name="site-oneshots"),
+    path("nsfw/", views.all_nsfw, name="site-nsfw"),
     path("latest_chapters/", views.all_chapters, name="site-chapters"),
     path("admin_home/", views.admin_home, name="admin_home"),
     path("about/", views.about, name="site-about"),

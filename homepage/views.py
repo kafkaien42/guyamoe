@@ -40,7 +40,6 @@ def admin_home(request):
     )
 
 
-cache_control(public=True, max_age=60, s_maxage=60)
 def chapters_data():
     chapters_page_dt = cache.get(f"chapters_page_dt")
     if not chapters_page_dt:
@@ -95,26 +94,24 @@ def chapters_data():
     return chapters_page_dt
 
 
-cache_control(public=True, max_age=60, s_maxage=60)
-def series_data(include_series=False, include_oneshots=False, author_slug=None):
+def series_data(include_series=False, include_oneshots=False, author_slug=None, nsfw=False):
     assert include_series or include_oneshots, "You must include something."
     to_label = {
         (True, True): "ongoing",
         (False, True): "oneshots",
         (True, False): "series",
     }
-    cache_label = f"{to_label[(include_series, include_oneshots)]}_page_dt"
+    cache_label = f"{to_label[(include_series, include_oneshots)]}_{'nsfw' if nsfw else 'sfw'}_page_dt"
     if author_slug:
         cache_label += author_slug
     series_page_dt = cache.get(cache_label)
     if not series_page_dt:
+        only_chapter_from_type = Chapter.objects
         if not include_series or not include_oneshots: 
-            only_chapter_from_type = Chapter.objects.filter(series__is_oneshot=include_oneshots)
-        else:
-            only_chapter_from_type = Chapter.objects
+            only_chapter_from_type = only_chapter_from_type.filter(series__is_oneshot=include_oneshots)
         if author_slug:
             only_chapter_from_type = only_chapter_from_type.filter(Q(series__author__slug=author_slug) | Q(series__artist__slug=author_slug))
-        series_latest_uploaded = only_chapter_from_type.order_by('series').values('series').annotate(Max('uploaded_on'))
+        series_latest_uploaded = only_chapter_from_type.filter(series__is_nsfw=nsfw).order_by('series').values('series').annotate(Max('uploaded_on'))
         latest_chapters = Chapter.objects.select_related("series").filter(uploaded_on__in=series_latest_uploaded.values_list('uploaded_on__max', flat=True)).order_by("-uploaded_on")
         volumes = Volume.objects.select_related("series").all()
         series_to_first_volume = {}
@@ -161,7 +158,7 @@ def series_data(include_series=False, include_oneshots=False, author_slug=None):
     return series_page_dt
 
 
-cache_control(public=True, max_age=300, s_maxage=300)
+@cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def all_chapters(request):
     data = chapters_data()
@@ -170,7 +167,7 @@ def all_chapters(request):
     return render(request, "homepage/show_chapters.html", data)
 
 
-cache_control(public=True, max_age=300, s_maxage=300)
+@cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def all_ongoing(request):
     data = series_data(include_series=True, include_oneshots=True)
@@ -179,7 +176,7 @@ def all_ongoing(request):
     return render(request, "homepage/show_series.html", data)
 
 
-cache_control(public=True, max_age=300, s_maxage=300)
+@cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def all_series(request):
     data = series_data(include_series=True)
@@ -188,7 +185,7 @@ def all_series(request):
     return render(request, "homepage/show_series.html", data)
 
 
-cache_control(public=True, max_age=300, s_maxage=300)
+@cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def all_oneshots(request):
     data = series_data(include_oneshots=True)
@@ -196,8 +193,16 @@ def all_oneshots(request):
     data["page_title"] = "Oneshots"
     return render(request, "homepage/show_series.html", data)
 
+@cache_control(public=True, max_age=300, s_maxage=300)
+@decorator_from_middleware(OnlineNowMiddleware)
+def all_nsfw(request):
+    data = series_data(include_series=True, include_oneshots=True, nsfw=True)
+    data["version_query"] = settings.STATIC_VERSION
+    data["page_title"] = "NSFW"
+    return render(request, "homepage/show_series.html", data)
 
-cache_control(public=True, max_age=300, s_maxage=300)
+
+@cache_control(public=True, max_age=300, s_maxage=300)
 @decorator_from_middleware(OnlineNowMiddleware)
 def author_series(request, author_slug: str):
     author_slug = str(author_slug)
