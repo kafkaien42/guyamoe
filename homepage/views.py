@@ -133,7 +133,7 @@ def series_data(include_series=False, include_oneshots=False, author_slug=None, 
                 "slug": chapter.series.slug,
                 "series_url": f"/read/manga/{chapter.series.slug}/",
                 "metadata" : [
-                    f"Last Updated Ch. {chapter.clean_chapter_number()} - {datetime.utcfromtimestamp(chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d')}"
+                    f"Last Updated Ch. {chapter.clean_chapter_number()} \n {datetime.utcfromtimestamp(chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d')}"
                     ],
                 "has_cover": volume and volume.volume_cover and volume.volume_cover != "",
                 "is_nsfw": chapter.series.is_nsfw

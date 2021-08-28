@@ -1084,7 +1084,13 @@ main a {
 	 background-position: 50% 10%;
 	  background-size: 1500px;
 	  /*background-image: url('/static/img/bg_box_blur_smol.png');*/
-  padding: 0;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 .page-series .sidecard {
@@ -1419,9 +1425,56 @@ main a {
 		min-width: 37em;
 	}
 }
+.px-0p5 {
+    padding-left: 0.125rem !important;
+    padding-right: 0.125rem !important;
+}
+.col-xl-5ths {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+@media (min-width: 1200px) {
+    .col-xl-5ths {
+        width: 20%;
+        float: left;
+    }
+}
+
 @media (min-width: 1400px) {
-	body {
+	/*body  {
 		font-size: 1.1em;
+	}
+	.page-series {
+		font-size: 0.9375em;
+	}*/
+}
+
+
+@media (min-width: 550px) {
+	.series-content  {
+		max-width: 550px;
+	}
+}
+@media (min-width: 768px) {
+	.series-content  {
+		max-width: 768px;
+	}
+}
+@media (min-width: 992px) {
+	.series-content  {
+		max-width: 900px;
+	}
+}
+/*@media (min-width: 1024px) {
+	.series-content  {
+		max-width: 1024px;
+	}
+}*/
+@media (min-width: 1200px) {
+	.series-content  {
+		max-width: 1080px; /*1185px*/
 	}
 }
 

@@ -196,7 +196,7 @@ var reading_button = null;
 						<a  href="{{ s.series_url }}" >
 							{% if s.has_cover %}
 								{% if forloop.counter0 < 3 %}
-								<img class="gallery-image" src="{{ s.volume_cover }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}" onerror='this.onerror=null; this.src="{{ s.volume_cover }}"'/>
+								<img class="gallery-image" src="{{ s.volume_cover_webp }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}" onerror='this.onerror=null; this.src="{{ s.volume_cover }}"'/>
 								{% else %}
 								<img class="gallery-image lazy" data-src="{{ s.volume_cover }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}" /> 
 								{% endif %}

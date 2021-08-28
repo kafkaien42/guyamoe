@@ -1411,7 +1411,7 @@ main a {
 	}
 }
 @media (min-width: 1400px) {
-	body {
+	body:not(.card-title) {
 		font-size: 1.1em;
 	}
 }
