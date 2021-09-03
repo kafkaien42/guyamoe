@@ -536,11 +536,11 @@ var reading_button = null;
 							<span class="text-white text-white font-weight-bold"> </span>
 						</div>
 					</div>
-					<div class="media media-3x4 justify-content-center">
+					<div class="embed-responsive embed-responsive-7by10">
 						<picture>
-							<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="img-fluid"
+							<source type="image/webp" srcset="{{ cover_vol_url_webp }}" class="card-img-top embed-responsive-item"
 								alt="{{ series }} manga" width="{{ cover_vol_width }}" height="{{ cover_vol_height }}"/>
-							<img src="{{ cover_vol_url }}" class="img-fluid"
+							<img src="{{ cover_vol_url }}" class="card-img-top embed-responsive-item"
 							    alt="{{ series }} manga" width="{{ cover_vol_width }}" height="{{ cover_vol_height }}"/>
 						</picture>
 					</div>
@@ -686,7 +686,7 @@ var reading_button = null;
 										{{ title }}
 									</a>
 								</td>
-								<td scope="row">{{ hit_counts }}</td>
+								<td scope="row" class="text-right">{{ hit_counts }}</td>
 								<td scope="row">{{ group }}</td>
 								<td scope="row" class="detailed-chapter-upload-date">{{ upload_date }}</td>
 								{% if "download" in available_features %}

@@ -1084,13 +1084,7 @@ main a {
 	 background-position: 50% 10%;
 	  background-size: 1500px;
 	  /*background-image: url('/static/img/bg_box_blur_smol.png');*/
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 0.1rem;
-  padding-right: 0.1rem;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
+  padding: 0;
 }
 
 .page-series .sidecard {
@@ -1148,8 +1142,6 @@ main a {
 	margin-bottom: 0.5em;
 	display: none;
 }
-
-
 
 .page-series .card {
 	border-top-left-radius: 0;
@@ -1420,63 +1412,27 @@ main a {
 	}
 }
 
+.embed-responsive .card-img-top {
+    object-fit: cover;
+}
+.embed-responsive-2by3::before{
+    padding-top:150%
+}
+.embed-responsive-7by10::before{
+    padding-top:141.17%
+}
+
 @media (min-width: 1000px) {
 	.manga-card .manga-links {
 		min-width: 37em;
 	}
 }
-.px-0p5 {
-    padding-left: 0.125rem !important;
-    padding-right: 0.125rem !important;
-}
-.col-xl-5ths {
-    position: relative;
-    min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
-}
-@media (min-width: 1200px) {
-    .col-xl-5ths {
-        width: 20%;
-        float: left;
-    }
-}
 
-@media (min-width: 1400px) {
-	/*body  {
-		font-size: 1.1em;
-	}
-	.page-series {
-		font-size: 0.9375em;
-	}*/
-}
-
-
-@media (min-width: 550px) {
-	.series-content  {
-		max-width: 550px;
-	}
-}
-@media (min-width: 768px) {
-	.series-content  {
-		max-width: 768px;
-	}
-}
-@media (min-width: 992px) {
-	.series-content  {
-		max-width: 900px;
-	}
-}
-/*@media (min-width: 1024px) {
-	.series-content  {
-		max-width: 1024px;
-	}
+/*@media (min-width: 1400px) {
+       body {
+               font-size: 1.1em;
+       }
 }*/
-@media (min-width: 1200px) {
-	.series-content  {
-		max-width: 1080px; /*1185px*/
-	}
-}
 
 .misc_pages_list body {
 	display: block !important;

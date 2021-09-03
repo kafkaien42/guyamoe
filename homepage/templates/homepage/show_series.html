@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block footer %}
+<script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js"></script>
+<script defer>
+var reading_button = null;
+
+	function zpad(n) {
+		if (n < 10) return '0' + n;
+		return n;
+	}
+	window.addEventListener("DOMContentLoaded", () => {
+		const lazyContent = new LazyLoad({
+		  // use_native: true // <-- there you go
+		});
+		lazyContent.update();
+	});
+
+</script>
+{% endblock %} {% block body %}
+<style>
+	.active {
+		background-color: red;
+		color: white;
+	}
+
+	h1 {
+		font-size: 1.4em;
+	}
+
+	p {
+		color: #dedede;
+	}
+
+	html,
+	html.h-100 {
+		background-attachment: fixed;
+		background-position: 50% 10%;
+		background-size: 1500px;
+		background-image: url("/static/img/bg_box.png");
+		background-color: black !important;
+	}
+
+	body {
+		background: none !important;
+		background-color: none !important;
+	}
+	.embed-responsive .card-img-top {
+		object-fit: cover;
+	}
+	.embed-responsive-2by3::before{
+		padding-top:150%
+	}
+	.embed-responsive-7by10::before{
+		padding-top:141.17%
+	}
+	.page-series .series-content {
+	  border-radius: 4px;
+	  background-color: #1a1a1a;
+			background-attachment: fixed;
+		 background-position: 50% 10%;
+		  background-size: 1500px;
+		  /*background-image: url('/static/img/bg_box_blur_smol.png');*/
+	  padding-top: 2rem;
+	  padding-bottom: 2rem;
+	  padding-left: 2rem;
+	  padding-right: 2rem;
+	  margin-left: auto;
+	  margin-right: auto;
+	  width: 100%;
+	}
+
+	.series-content .card
+	{
+		 border-top-left-radius:.6em;
+		 border-top-right-radius:.4em;
+		 border-bottom-left-radius:.4em;
+		 border-bottom-right-radius:.4em;
+  		background-color: #1a1a1a;
+	}
+	.series-content .card-img-top
+	{
+		 border-top-left-radius:.6em;
+		 border-top-right-radius:.6em;
+		 border-bottom-left-radius:.6em;
+		 border-bottom-right-radius:.6em;
+	}
+	.series-content .card-footer
+	{
+		padding-top: 0.25rem;
+		padding-right: 0.25rem;
+		padding-bottom: 0.0rem;
+		padding-left: 0.25rem;
+		border-top: 0px;
+	}
+	.series-content .card-title
+	{
+		font-weight: 700;
+	}
+
+	.series-content  h1 {
+		color: white;
+		font-size: 2em;
+		margin-bottom: 0.5em;
+		text-align: center;
+	}
+	.col-xl-5ths {
+		position: relative;
+		min-height: 1px;
+		padding-right: 15px;
+		padding-left: 15px;
+	}
+	@media (min-width: 1200px) {
+		.col-xl-5ths {
+			width: 20%;
+			float: left;
+		}
+	}
+	@media (min-width: 550px) {
+		.series-content  {
+			max-width: 550px;
+		}
+	}
+	@media (min-width: 768px) {
+		.series-content  {
+			max-width: 700px;
+		}
+	}
+	@media (min-width: 992px) {
+		.series-content  {
+			max-width: 900px;
+		}
+	}
+	@media (min-width: 1200px) {
+		.series-content  {
+			max-width: 1080px;
+		}
+	}
+</style>
+
+<div class="container-fluid page-series">
+	<div class="bs-docs-section clearfix mt-1">
+		<div class="row justify-content-center">
+			<div class="series-content">
+				{% if "title" in available_features %}
+					<h1>Series and oneshots by {{ author }}</h1>
+				{% endif %}
+				<div class="container-fluid">
+					<div class="row">
+						{% for s in series_list %}
+						<div class="col-xl-2p4 col-lg-3 col-md-4 col-sm-6 col-6 mb-2 px-1">
+							<div class="card h-100 text-center">
+									<div class="embed-responsive embed-responsive-7by10">
+										{% if s.has_cover %}
+											<a href="{{ s.series_url }}" >
+												{% if forloop.counter0 < 3 %}
+												<img class="card-img-top embed-responsive-item" src="{{ s.volume_cover }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}"/>
+												{% else %}
+												<img class="card-img-top embed-responsive-item lazy" data-src="{{ s.volume_cover }}" alt="Cover for {{ s.name }}" width="{{ s.volume_cover_width }}"  height="{{ s.volume_cover_height }}"/>
+												{% endif %}
+											</a>
+										{% endif %}
+									</div>
+									<div class="card-body">
+											<h7 class="card-title"><a href="{{ s.series_url }}" >{{ s.name }}</a></h7>
+										{% if s.is_nsfw %} <span class="badge badge-danger">NSFW</span> {% endif %}
+									</div>
+								</a>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	// remoteStorage.on("ready", async () => {
+	//   {% if reader_modifier %}
+ //      let source = "{{ reader_modifier }}".split("/")[1];
+ //      {% else %}
+ //      let source = window.location.pathname
+ //        .split("/")
+ //        .filter(e => e)[1]
+ //        .replace("_", " ");
+ //      {% endif %}
+
+	//  {% for series_slug, url, title in unique_series %}
+ //      await globalHistoryHandler.pushSeries("{{ series_slug }}", "", source, "{{ url }}", "{{ title }}");
+	//  {% endfor %}
+ //      window.dispatchEvent(new CustomEvent("history-ready"));
+ //    });
+</script>
+{% endblock %}
