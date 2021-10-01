@@ -664,6 +664,7 @@ var reading_button = null;
 								<th scope="col">Views</th>
 								<th scope="col">Group</th>
 								<th scope="col">Last Updated</th>
+								<th scope="col"></th>
 								{% if "download" in available_features %}
 								<th scope="col" style="padding-left: 12px;">
 									<i class="fa fa-download"></i>
@@ -672,7 +673,7 @@ var reading_button = null;
 							</tr>
 						</thead>
 						<tbody id="chapterTable">
-							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, hit_counts in chapter_list %}
+							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, hit_counts, md_uuid in chapter_list %}
 							<tr class="table-default" data-chapter="{{ chapter }}">
 								<td scope="row" class="read-icon" onclick="updateRead('{{ chapter }}')"></td>
 								<td scope="row" class="chapter-title">
@@ -689,6 +690,11 @@ var reading_button = null;
 								<td scope="row" class="text-right">{{ hit_counts }}</td>
 								<td scope="row">{{ group }}</td>
 								<td scope="row" class="detailed-chapter-upload-date">{{ upload_date }}</td>
+								<td scope="row">
+									{% if md_uuid %}
+										<a href="https://mangadex.org/chapter/{{ md_uuid }}"><span class="badge">MD</span></a>
+									{% endif %}
+								</td>
 								{% if "download" in available_features %}
 								<td scope="row" class="detailed-chapter-download-chapter">
 									<a class="text-muted" data-toggle="tooltip" data-placement="top"

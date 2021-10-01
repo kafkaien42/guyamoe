@@ -104,7 +104,8 @@ def series_page_data(series_slug):
                     chapter.group.name if not multiple_groups else "Multiple Groups",
                     [u.year, u.month - 1, u.day, u.hour, u.minute, u.second],
                     chapter.volume or "null",
-                    id_to_hit_count.get(int(chapter.id), 0)
+                    id_to_hit_count.get(int(chapter.id), 0),
+                    chapter.scraper_hash
                 ]
             )
             volume_dict[chapter.volume].append(
@@ -112,7 +113,7 @@ def series_page_data(series_slug):
                     chapter.clean_chapter_number(),
                     chapter.slug_chapter_number(),
                     chapter.group.name if not multiple_groups else "Multiple Groups",
-                    [u.year, u.month - 1, u.day, u.hour, u.minute, u.second],
+                    [u.year, u.month - 1, u.day, u.hour, u.minute, u.second]
                 ]
             )
         volume_list = []
@@ -165,6 +166,8 @@ def series_page_data(series_slug):
             "reader_modifier": "read/manga",
             "discord_notification_enabled": settings.DISCORD_WEBHOOK_TOKEN != "",
         }
+        if series.scraping_uuid:
+            series_page_dt["metadata"].append(["Link", 'On MangaDex', f"https://mangadex.org/title/{str(series.scraping_uuid)}"])
         cache.set(f"series_page_dt_{series_slug}", series_page_dt, 3600 * 12)
     return series_page_dt
 
