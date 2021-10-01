@@ -106,13 +106,20 @@ def series_data(include_series=False, include_oneshots=False, author_slug=None, 
         cache_label += author_slug
     series_page_dt = cache.get(cache_label)
     if not series_page_dt:
-        only_chapter_from_type = Chapter.objects
-        if not include_series or not include_oneshots: 
-            only_chapter_from_type = only_chapter_from_type.filter(series__is_oneshot=include_oneshots)
+
+        # Filter series we are not interested in based which page we are generating
+
+        only_series_from_type = Series.objects.filter(is_nsfw=nsfw).filter(chapter__isnull=False)
+        if not include_series or not include_oneshots:
+            only_series_from_type = only_series_from_type.filter(is_oneshot=include_oneshots)
         if author_slug:
-            only_chapter_from_type = only_chapter_from_type.filter(Q(series__author__slug=author_slug) | Q(series__artist__slug=author_slug))
-        series_latest_uploaded = only_chapter_from_type.filter(series__is_nsfw=nsfw).order_by('series').values('series').annotate(Max('uploaded_on'))
-        latest_chapters = Chapter.objects.select_related("series").filter(uploaded_on__in=series_latest_uploaded.values_list('uploaded_on__max', flat=True)).order_by("-uploaded_on")
+            only_series_from_type = only_series_from_type.filter(Q(author__slug=author_slug) | Q(artist__slug=author_slug))
+
+        # Order all series by the upload time of their latest chapter
+        latest_series = only_series_from_type.annotate(Max('chapter__uploaded_on')).order_by('-chapter__uploaded_on__max')
+
+        # Find the first volume cover of each series that has a volume
+
         volumes = Volume.objects.select_related("series").all()
         series_to_first_volume = {}
         for volume in volumes:
@@ -121,28 +128,27 @@ def series_data(include_series=False, include_oneshots=False, author_slug=None, 
                 series_to_first_volume[volume.series.id] = (vol_num, volume)
             elif series_to_first_volume[volume.series.id][0] > vol_num:
                 series_to_first_volume[volume.series.id] = (vol_num, volume)
+
         series_list = []
-        # i = 0
-        for chapter in latest_chapters:
+        for series in latest_series:
             # For some stupid reason, there is no relationship between chapters and volumes
             volume = None
-            if chapter.series.id in series_to_first_volume:
-                volume = series_to_first_volume[chapter.series.id][1]
+            if series.id in series_to_first_volume:
+                volume = series_to_first_volume[series.id][1]
+            has_cover = volume and volume.volume_cover and volume.volume_cover != ""
             a_series_list = {
-                "name": chapter.series.name,
-                "slug": chapter.series.slug,
-                "series_url": f"/read/manga/{chapter.series.slug}/",
-                "metadata" : [
-                    f"Last Updated Ch. {chapter.clean_chapter_number()} \n {datetime.utcfromtimestamp(chapter.uploaded_on.timestamp()).strftime('%Y-%m-%d')}"
-                    ],
-                "has_cover": volume and volume.volume_cover and volume.volume_cover != "",
-                "is_nsfw": chapter.series.is_nsfw
+                "name": series.name,
+                "slug": series.slug,
+                "series_url": f"/read/manga/{series.slug}/",
+                "metadata": [],
+                "has_cover": has_cover,
+                "is_nsfw": series.is_nsfw
             }
-            if volume and a_series_list['has_cover']:
+            if has_cover:
                 path, _, ext = str(volume.volume_cover).rpartition('.')
                 volume_cover_webp = f"/media/{path}.webp"
                 volume_cover_blur = f"/media/{path}_blur.{ext}"
-                a_series_list["volume_cover"] = volume_cover_blur if chapter.series.is_nsfw else volume_cover_webp
+                a_series_list["volume_cover"] = volume_cover_blur if series.is_nsfw else volume_cover_webp
                 a_series_list["volume_cover_width"] = int(volume.volume_cover.width)
                 a_series_list["volume_cover_height"] = int(volume.volume_cover.height)
             series_list.append(a_series_list)

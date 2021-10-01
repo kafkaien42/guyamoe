@@ -10,4 +10,4 @@ psycopg2==2.8.4
 pymemcache
 requests==2.22.0
 beautifulsoup4==4.8.2
-natsort
+natsort==7.1.1
