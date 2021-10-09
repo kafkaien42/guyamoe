@@ -217,6 +217,7 @@ def get_all_metadata(series_slug, slug_chapter_number):
         cache.set(f"series_metadata_{series_slug}_{slug_chapter_number}", series_metadata, 3600 * 12)
     return series_metadata
 
+
 @cache_control(public=True, max_age=30, s_maxage=30)
 @decorator_from_middleware(OnlineNowMiddleware)
 def reader(request, series_slug, chapter, page=None):

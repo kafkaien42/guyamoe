@@ -21,7 +21,6 @@ class HitCount(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=200)
-    # slug = models.SlugField(unique=True, max_length=200, db_index=True)
     slug = AutoSlugField(null=True, default=None, unique=True, db_index=True, editable=True, populate_from='name')
 
     def __str__(self):
@@ -33,9 +32,15 @@ class Person(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=200)
+    scrapping_uuids = models.CharField(max_length=400, null=True, help_text='External source uuids as a comma separated list of uuids (example: "123e4567-e89b-12d3-a456-426614174000" or "123e4567-e89b-12d3-a456-426614174000,123e4567-e89b-12d3-a456-426614174001")')
 
     def __str__(self):
         return self.name
+
+    def get_parsed_scrapping_uuids(self):
+        if self.scrapping_uuids:
+            return [uuid.strip() for uuid in self.scrapping_uuids.split(',')]
+        return None
 
 
 class Series(models.Model):
