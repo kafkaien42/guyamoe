@@ -91,24 +91,6 @@ def get_all_groups(request):
     return HttpResponse(json.dumps(all_groups()), content_type="application/json")
 
 
-# @cache_control(public=True, max_age=43200, s_maxage=43200)
-# def download_volume(request, series_slug, volume):
-#     zip_filename = f"{series_slug}_vol_{volume}.zip"
-#     zip_path = os.path.join(settings.MEDIA_ROOT, "manga", series_slug, zip_filename)
-#     if os.path.exists(zip_path) and not (
-#         time.time() - os.stat(zip_path).st_mtime > (3600 * 8)
-#     ):
-#         with open(
-#             os.path.join(settings.MEDIA_ROOT, "manga", series_slug, zip_filename), "rb"
-#         ) as fh:
-#             zip_file = fh.read()
-#     else:
-#         zip_file, zip_filename = zip_volume(series_slug, volume)
-#     resp = HttpResponse(zip_file, content_type="application/x-zip-compressed")
-#     resp["Content-Disposition"] = "attachment; filename=%s" % zip_filename
-#     return resp
-
-
 @cache_control(public=True, max_age=21600, s_maxage=21600)
 def download_chapter(request, series_slug, chapter):
     group = request.GET.get("group", None)

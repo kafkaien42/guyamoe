@@ -32,14 +32,14 @@ class Person(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=200)
-    scrapping_uuids = models.CharField(max_length=400, null=True, help_text='External source uuids as a comma separated list of uuids (example: "123e4567-e89b-12d3-a456-426614174000" or "123e4567-e89b-12d3-a456-426614174000,123e4567-e89b-12d3-a456-426614174001")')
+    scrapping_uuids = models.CharField(max_length=400, null=True, help_text='External source uuids as a comma separated list of uuids (example: "123e4567-e89b-12d3-a456-426614174000" or "123e4567-e89b-12d3-a456-426614174000,123e4567-e89b-12d3-a456-426614174001"), ordering does not matter.')
 
     def __str__(self):
         return self.name
 
     def get_parsed_scrapping_uuids(self):
         if self.scrapping_uuids:
-            return [uuid.strip() for uuid in self.scrapping_uuids.split(',')]
+            return [uuid.strip() for uuid in str(self.scrapping_uuids).split(',')]
         return None
 
 

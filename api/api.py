@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from django.conf import settings
 from django.core.cache import cache
 from django.http import Http404
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, UnidentifiedImageError
 
 from reader.models import Chapter, ChapterIndex, Group, Series, Volume
 
@@ -165,7 +165,6 @@ def create_chapter_obj(
         if not str(chapter_number).endswith("0")
         else "_"
     )
-
     if not existing_chapter:
         uid = chapter_folder_numb + random_chars()
     else:
@@ -176,6 +175,7 @@ def create_chapter_obj(
     group_folder = str(group.id)
 
     # If chapter exists, see if release by group exists. if it does, delete the group's chapter pages
+    ch_obj = None
     if existing_chapter:
         ch_obj = Chapter.objects.filter(
             chapter_number=chapter_number, series=series, group=group
@@ -187,7 +187,7 @@ def create_chapter_obj(
             update = True
 
     # Create the chapter model for the group if it didn't exist.
-    if not existing_chapter or not ch_obj:
+    if not ch_obj:
         ch_obj = Chapter.objects.create(
             chapter_number=chapter_number,
             group=group,
@@ -195,7 +195,7 @@ def create_chapter_obj(
             folder=uid,
             title=title,
             volume=latest_volume,
-            uploaded_on=datetime.utcnow().replace(tzinfo=timezone.utc),
+            uploaded_on=datetime.utcnow().replace(tzinfo=timezone.utc)
         )
     chapter_folder = os.path.join(
         settings.MEDIA_ROOT, "manga", series.slug, "chapters", uid
@@ -208,7 +208,15 @@ def create_chapter_obj(
 
 
 def create_preview_pages(chapter_folder, group_folder, page_file):
-    shrunk = Image.open(os.path.join(chapter_folder, group_folder, page_file))
+    path_to_image = os.path.join(chapter_folder, group_folder, page_file)
+
+    try:
+        shrunk = Image.open(path_to_image)
+    except UnidentifiedImageError:
+        print(f"Error found an invalid image, removing it. '{path_to_image}'")
+        os.remove(path_to_image)
+        return
+
     page_name, ext = page_file.rsplit(".", 1)
     if shrunk.width > shrunk.height:
         if "_w." not in page_file:
