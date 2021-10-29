@@ -625,6 +625,7 @@ var reading_button = null;
 					{% endif %}
 					{% if "admin" in available_features %}
 					<a href="#" onclick="loadGroups('{{ slug }}')" data-toggle="modal" data-target="#uploadModal"><i class="float-right fa fa-upload fa-lg" ></i></a>
+					<a href="/admin/reader/series/{{ series_id }}/change/" ><i class="float-right fa fa-edit fa-lg" ></i></a>
 					{% endif %}
 				</div>
 				{% if "compact" in available_features %}

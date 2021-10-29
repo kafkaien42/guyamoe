@@ -206,6 +206,7 @@ def get_all_metadata(series_slug, slug_chapter_number):
             first_page_url = chapter.first_page_absolute_url()
 
             series_metadata[chapter.slug_chapter_number()] = {
+                "series_id": int(chapter.series.id),
                 "series_name": chapter.series.name,
                 "slug": chapter.series.slug,
                 "author_name": series.author.name,
