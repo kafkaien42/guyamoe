@@ -11,6 +11,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.http import Http404
 from PIL import Image, ImageFilter, UnidentifiedImageError
+from django.shortcuts import get_object_or_404
 
 from reader.models import Chapter, ChapterIndex, Group, Series, Volume
 
@@ -31,8 +32,9 @@ def all_chapter_data_etag(request):
 def chapter_data_etag(request, series_slug):
     etag = cache.get(f"{series_slug}_chapter_data_etag")
     if not etag:
+        series = get_object_or_404(Series, slug=series_slug)
         obj = (
-            Chapter.objects.filter(series=Series.objects.get(slug=series_slug))
+            Chapter.objects.filter(series=series)
             .order_by("-uploaded_on")
             .first()
         )
