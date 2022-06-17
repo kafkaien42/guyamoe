@@ -22,7 +22,7 @@ PARENT_DIR = BASE_DIR.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "/bB/PiOBQ+4sm9nugkW5Oj5e9JvRKNPRIfNt1P6XSm0=")
 
-CANONICAL_ROOT_DOMAIN = "localhost:8000"
+CANONICAL_ROOT_DOMAIN = "127.0.0.1:8000"
 
 DEBUG = True
 
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "reader.apps.ReaderConfig",
     "homepage.apps.HomepageConfig",
+    "mangadex.apps.MangadexConfig",
     "misc.apps.MiscConfig",
     "proxy.apps.ProxyConfig",
     "django.contrib.admin",

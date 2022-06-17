@@ -63,19 +63,19 @@ class SeriesAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        form.base_fields["synopsis"].help_text = 'Here is an example of how to set the author\'s link:\n' + linebreaks(escape('<ul>\n\
-         <li><a href=""><img src="https://i.imgur.com/dQCXZkU.png" alt="twitter"/>Artist\'s Twitter</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/oiVINmy.png" alt="pixiv"/>Artist\'s Pixiv</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/NVVf9Jl.png" alt="MelonBook"/>Artist\'s MelonBook</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/DByqIm6.png" alt="FanBox"/>Artist\'s FANBOX</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/5Wohzas.png" alt="BOOTH"/>Artist\'s BOOTH</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/H1Q0eHg.png" alt="NicoVideo"/>Artist\'s Nico</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/mLCeebg.png" alt="Skeb"/>Artist\'s Skeb</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/qr4qCHu.png" alt="Skeb"/>Artist\'s Fantia</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/gpw5ezu.png" alt="Skeb"/>Artist\'s Tumblr</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/TysezOa.png" alt="Skeb"/>Artist\'s Youtube</a></li>\n\
-         <li><a href=""><img src="https://i.imgur.com/dzEFKZB.png" alt="Skeb"/>Artist\'s Website</a></li>\n\
-         </ul>\n'))
+        form.base_fields["synopsis"].help_text = 'Here is an example of how to set the author\'s link:\n' + linebreaks(escape('\n\
+         <a href=""><img src="https://i.imgur.com/dQCXZkU.png" alt="twitter"/>Artist\'s Twitter</a>\n\
+         <a href=""><img src="https://i.imgur.com/oiVINmy.png" alt="pixiv"/>Artist\'s Pixiv</a>\n\
+         <a href=""><img src="https://i.imgur.com/NVVf9Jl.png" alt="MelonBook"/>Artist\'s MelonBook</a>\n\
+         <a href=""><img src="https://i.imgur.com/DByqIm6.png" alt="FanBox"/>Artist\'s FANBOX</a>\n\
+         <a href=""><img src="https://i.imgur.com/5Wohzas.png" alt="BOOTH"/>Artist\'s BOOTH</a>\n\
+         <a href=""><img src="https://i.imgur.com/H1Q0eHg.png" alt="NicoVideo"/>Artist\'s Nico</a>\n\
+         <a href=""><img src="https://i.imgur.com/mLCeebg.png" alt="Skeb"/>Artist\'s Skeb</a>\n\
+         <a href=""><img src="https://i.imgur.com/qr4qCHu.png" alt="Fantia"/>Artist\'s Fantia</a>\n\
+         <a href=""><img src="https://i.imgur.com/gpw5ezu.png" alt="Tumblr"/>Artist\'s Tumblr</a>\n\
+         <a href=""><img src="https://i.imgur.com/TysezOa.png" alt="Youtube"/>Artist\'s Youtube</a>\n\
+         <a href=""><img src="https://i.imgur.com/dzEFKZB.png" alt="Personal Website"/>Artist\'s Website</a>\n\
+         \n'))
         return form
 
 

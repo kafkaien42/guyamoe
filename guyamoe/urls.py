@@ -52,6 +52,15 @@ urlpatterns = [
     ),
     path("proxy/", include("proxy.urls")),
 ]
+
+# Importer/Exporter is not included in the repo and is distributed using a different license
+try:
+    import mangadex.urls
+    urlpatterns.append(path("mangadex/", include("mangadex.urls")))
+except ImportError:
+    pass
+
+
 # only add prometheus in production
 
 handler404 = "homepage.views.handle404"

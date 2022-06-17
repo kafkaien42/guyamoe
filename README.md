@@ -35,7 +35,7 @@ Limitations:
 
 For Debian:
 ```
-sudo apt-get install libpq-dev build-essential python3-dev python3-pip
+sudo apt-get install git libpq-dev build-essential python3-dev python3-pip
 ```
 
 ## Install

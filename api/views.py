@@ -166,6 +166,7 @@ def post_release_to_discord(uri_scheme: str, chapter):
     url = f"{root}{chapter.get_absolute_url()}"
     series_url = f"{root}{chapter.series.get_absolute_url()}"
     author_url = f"{root}{chapter.series.author.get_absolute_url()}"
+    artist_url = f"{root}{chapter.series.artist.get_absolute_url()}"
     chapter_1st_image = f"{root}{chapter.first_page_absolute_url()}"
     site_log_url = f"{root}/static/logo-mt-squared-small.png"
     version_label = f"(v{chapter.version})" if chapter.version else "(v1)"
@@ -181,6 +182,10 @@ def post_release_to_discord(uri_scheme: str, chapter):
         timestamp=datetime.utcnow(),
     )
     em.set_author(name=f"{chapter.series.author.name}", url=author_url)
+
+    em.add_field(name='Author', value=f"[{chapter.series.author.name}]({author_url})", inline=True)
+    em.add_field(name='Artist', value=f"[{chapter.series.artist.name}]({artist_url})", inline=True)
+
     em.set_image(url=chapter_1st_image)
 
     # Only ping if it is the first version of the chapter
