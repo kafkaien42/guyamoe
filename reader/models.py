@@ -139,6 +139,7 @@ class Chapter(models.Model):
     version = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     preferred_sort = models.CharField(max_length=200, blank=True, null=True)
     scraper_hash = models.CharField(max_length=36, blank=True)
+    is_public = models.BooleanField(default=False)
 
     def clean_chapter_number(self):
         return (

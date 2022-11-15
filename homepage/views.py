@@ -41,10 +41,13 @@ def admin_home(request):
 
 
 def chapters_data():
+    """All chapters display in the chapter page"""
+    # TODO: Implement paging
+    MAX_NUM_CHAPTER = 500
     chapters_page_dt = cache.get(f"chapters_page_dt")
     if not chapters_page_dt:
         # series = get_object_or_404(Series)
-        chapters = Chapter.objects.order_by("-uploaded_on").select_related(
+        chapters = Chapter.objects.filter(is_public=True).order_by("-uploaded_on").select_related(
             "series", "group"
         )
         chapter_content_type = ContentType.objects.get(app_label="reader", model="chapter")
@@ -53,7 +56,7 @@ def chapters_data():
         seriess = Series.objects.all()
         latest_chapter = chapters.latest("uploaded_on") if chapters else None
         chapter_list = []
-        for chapter in chapters:
+        for chapter in chapters[:MAX_NUM_CHAPTER]:
             u = chapter.uploaded_on
             chapter_list.append(
                 [
@@ -107,9 +110,9 @@ def series_data(include_series=False, include_oneshots=False, author_slug=None, 
     series_page_dt = cache.get(cache_label)
     if not series_page_dt:
 
-        # Filter series we are not interested in based which page we are generating
+        # Filter series we are not interested in based on which page we are generating
 
-        only_series_from_type = Series.objects.filter(is_nsfw=nsfw).filter(chapter__isnull=False)
+        only_series_from_type = Series.objects.filter(is_nsfw=nsfw).filter(chapter__isnull=False, chapter__is_public=True)
         if not include_series or not include_oneshots:
             only_series_from_type = only_series_from_type.filter(is_oneshot=include_oneshots)
         if author_slug:
@@ -244,7 +247,7 @@ def random(request):
     if not random_opts:
         random_opts = [
             (ch.series.slug, ch.slug_chapter_number())
-            for ch in Chapter.objects.all().select_related("series")]
+            for ch in Chapter.objects.all().select_related("series")]  # Private chapters can get be found like that :)
         cache.set("random_opts", random_opts, 3600 * 96)
     series_slug, chap_slug = r.choice(random_opts)
     return redirect(

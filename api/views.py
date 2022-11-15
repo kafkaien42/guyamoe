@@ -39,6 +39,7 @@ def get_series_data(request, series_slug):
 
 @cache_control(public=True, max_age=900, s_maxage=900)
 def get_all_series(request):
+    """get_all_series/ endpoint """
     all_series_data = cache.get("all_series_data")
     if not all_series_data:
         all_series = Series.objects.all().select_related("author", "artist")
@@ -50,7 +51,7 @@ def get_all_series(request):
                 if vol.volume_cover:
                     cover_vol_url = f"/media/{vol.volume_cover}"
                     break
-            chapters = Chapter.objects.filter(series=series)
+            chapters = Chapter.objects.filter(series=series, is_public=True)
             last_updated = None
             for ch in chapters:
                 if not last_updated or ch.uploaded_on > last_updated:
@@ -76,7 +77,7 @@ def get_groups(request, series_slug):
     if not groups_data:
         groups_data = {
             str(ch.group.id): ch.group.name
-            for ch in Chapter.objects.filter(series__slug=series_slug).select_related(
+            for ch in Chapter.objects.filter(series__slug=series_slug, is_public=True).select_related(
                 "group"
             )
         }
@@ -216,11 +217,27 @@ def upload_new_chapter(request, series_slug):
         )
 
 
+def publish_chapter(request, series_slug, chapter):
+    if request.method == "POST" and request.user and request.user.is_staff:
+        series = Series.objects.get(slug=series_slug)
+        chapter = Chapter.objects.get(chapter_number=chapter, series=series)
+        chapter.is_public = True
+        chapter.save()
+        return HttpResponse(
+            json.dumps({"response": "success"}), content_type="application/json"
+        )
+    
+    return HttpResponse(
+        json.dumps({"response": "failure"}), content_type="application/json"
+    )
+
+
 def upload_new_oneshot(request):
     if request.method == "POST" and request.user and request.user.is_staff:
         author_name = request.POST["author"]
         author = Person.objects.filter(name=author_name).all()[0]
         slug = request.POST["seriesSlug"]
+        is_oneshot = request.POST['isOneshot'] == "oneshot"
 
         series = Series.objects.create(
             name=request.POST["seriesTitle"],
@@ -232,6 +249,8 @@ def upload_new_oneshot(request):
             scraping_enabled=False,
             is_oneshot=(request.POST['isOneshot'] == "oneshot")
         )
+        if is_oneshot:
+            request.POST["chapterTitle"] = "oneshot"
 
         if "seriesCover" in request.FILES:
             Volume.objects.create(volume_number=request.POST["volumeNumber"], series=series, volume_cover=request.FILES["seriesCover"])

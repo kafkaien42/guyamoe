@@ -32,7 +32,7 @@ class ChapterViewSitemap(Sitemap):
     protocol = "https"
 
     def items(self):
-        return Chapter.objects.filter(series__isnull=False).order_by(
+        return Chapter.objects.filter(series__isnull=False, is_public=True).order_by(
             "series__id", "-chapter_number"
         )
 

@@ -19,7 +19,7 @@ from reader.models import Chapter, ChapterIndex, Group, Series, Volume
 def all_chapter_data_etag(request):
     etag = cache.get("all_chapter_data_etag")
     if not etag:
-        obj = Chapter.objects.order_by("-uploaded_on").first()
+        obj = Chapter.objects.filter(is_public=True).order_by("-uploaded_on").first()
 
         if obj:
             etag = str(obj.updated_on or obj.uploaded_on)
@@ -34,7 +34,7 @@ def chapter_data_etag(request, series_slug):
     if not etag:
         series = get_object_or_404(Series, slug=series_slug)
         obj = (
-            Chapter.objects.filter(series=series)
+            Chapter.objects.filter(series=series, is_public=True)
             .order_by("-uploaded_on")
             .first()
         )
@@ -47,6 +47,9 @@ def chapter_data_etag(request, series_slug):
 
 
 def series_data(series_slug):
+    """
+    Generate series representation consummed by the REST api endpoints
+    """
     series = Series.objects.filter(slug=series_slug).first()
     if not series:
         raise Http404("Page not found.")
@@ -154,7 +157,7 @@ def delete_chapter_pages_if_exists(folder_path, slug_chapter_number, group_folde
 
 
 def create_chapter_obj(
-    chapter: float, group: Group, series: Series, latest_volume: int, title: str,
+    chapter: float, group: Group, series: Series, latest_volume: int, title: str, is_public: bool = False
 ):
     update = False
     chapter_number = chapter
@@ -197,7 +200,8 @@ def create_chapter_obj(
             folder=uid,
             title=title,
             volume=latest_volume,
-            uploaded_on=datetime.utcnow().replace(tzinfo=timezone.utc)
+            uploaded_on=datetime.utcnow().replace(tzinfo=timezone.utc),
+            is_public=is_public
         )
     chapter_folder = os.path.join(
         settings.MEDIA_ROOT, "manga", series.slug, "chapters", uid

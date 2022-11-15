@@ -21,7 +21,7 @@ class AllChaptersFeed(Feed):
     description_template = 'rss_feed.html'
 
     def items(self):
-        return Chapter.objects.order_by("-uploaded_on")
+        return Chapter.objects.filter(is_public=True).order_by("-uploaded_on")
 
     def item_title(self, item):
         return f"{item.series.name} - {item.clean_title()}"
@@ -55,7 +55,7 @@ class SeriesChaptersFeed(Feed):
         return obj.get_absolute_url()
 
     def items(self, obj):
-        return Chapter.objects.filter(series=obj).order_by("-uploaded_on")
+        return Chapter.objects.filter(series=obj, is_public=True).order_by("-uploaded_on")
 
     def item_pubdate(self, item):
         return item.uploaded_on

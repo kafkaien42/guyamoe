@@ -184,7 +184,7 @@ class MangaDex(BaseScraper):
             )
             return
         ch_obj, chapter_folder, group_folder, is_update = create_chapter_obj(
-            chapter_number, group, series, latest_volume, title
+            chapter_number, group, series, latest_volume, title, is_public=True
         )
         ch_obj.scraper_hash = self.generate_source_chapter_hash(md_chapter_data)
         ch_obj.save()

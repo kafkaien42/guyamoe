@@ -54,11 +54,14 @@ def hit_count(request):
     return HttpResponse(json.dumps({}), content_type="application/json")
 
 
-def series_page_data(series_slug):
-    series_page_dt = cache.get(f"series_page_dt_{series_slug}")
+def series_page_data(series_slug, show_private_chapters=False):
+    series_page_dt = cache.get(f"series_page_dt_{series_slug}_{show_private_chapters}")
     if not series_page_dt:
         series = get_object_or_404(Series, slug=series_slug)
-        chapters = Chapter.objects.filter(series=series).select_related(
+        chapters = Chapter.objects.filter(series=series)
+        if not show_private_chapters:
+            chapters = chapters.filter(is_public=True)
+        chapters.select_related(
             "series", "group"
         )
         latest_chapter = chapters.latest("uploaded_on") if chapters else None
@@ -105,7 +108,8 @@ def series_page_data(series_slug):
                     [u.year, u.month - 1, u.day, u.hour, u.minute, u.second],
                     chapter.volume or "null",
                     id_to_hit_count.get(int(chapter.id), 0),
-                    chapter.scraper_hash
+                    chapter.scraper_hash,
+                    chapter.is_public
                 ]
             )
             volume_dict[chapter.volume].append(
@@ -184,7 +188,7 @@ def series_info(request, series_slug):
 @cache_control(public=True, max_age=60, s_maxage=60)
 @decorator_from_middleware(OnlineNowMiddleware)
 def series_info_admin(request, series_slug):
-    data = series_page_data(series_slug)
+    data = series_page_data(series_slug, show_private_chapters=True)
     data["version_query"] = settings.STATIC_VERSION
     data["available_features"].append("admin")
     return render(request, "reader/series.html", data)
