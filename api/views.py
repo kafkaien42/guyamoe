@@ -157,12 +157,22 @@ def save_zip_file(input_zip_file, chapter_folder, group_folder):
                 f.write(zip_file.read(page))
 
 
-def post_release_to_discord(uri_scheme: str, chapter):
-    webhook = Webhook.partial(
-        settings.DISCORD_WEBHOOK_ID,
-        settings.DISCORD_WEBHOOK_TOKEN,
-        adapter=RequestsWebhookAdapter(),
-    )
+def get_webhook_id_token_from_url(webhook_url: str):
+    """
+    Input: https://discord.com/api/webhooks/1042230246973374564/2WdWK9Xsk0ki-MbgQllx5q6p0XNDs3FuzgpVVcCN-58bVKOxHOGmQwFT94vu6JQqi-oq
+    Output: 1042230246973374564, 2WdWK9Xsk0ki-MbgQllx5q6p0XNDs3FuzgpVVcCN-58bVKOxHOGmQwFT94vu6JQqi-oq
+    """
+    url_components = webhook_url.rstrip('/').split('/')
+    return int(url_components[-2]), url_components[-1]
+
+
+def post_prerelease_to_discord(uri_scheme: str, chapter):
+    if not settings.DISCORD_PRERELEASE_WEBHOOK_URL:
+        print("Discord webhook url for prerelease is not set.")
+        return
+    webhook_id, webhook_token = get_webhook_id_token_from_url(settings.DISCORD_PRERELEASE_WEBHOOK_URL)
+    webhook = Webhook.partial(webhook_id, webhook_token, adapter=RequestsWebhookAdapter())
+
     root = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}"
     url = f"{root}{chapter.get_absolute_url()}"
     series_url = f"{root}{chapter.series.get_absolute_url()}"
@@ -174,11 +184,11 @@ def post_release_to_discord(uri_scheme: str, chapter):
 
     em = Embed(
         color=0x000000,
-        title=f"New Release!  Chapter {chapter.clean_chapter_number()} {version_label} of {chapter.series.name}",
+        title=f"Please PR this new release!  Chapter {chapter.clean_chapter_number()} {version_label} of {chapter.series.name}",
         description=f"{url}\n\n"
                     f"[Read other chapters]({series_url})\n"
                     f"[Read other series by this author]({author_url})\n\n"
-                    f"{settings.DISCORD_MESSAGE}",
+                    f"{settings.DISCORD_PRERELEASE_MESSAGE}",
         url=url,
         timestamp=datetime.utcnow(),
     )
@@ -190,8 +200,54 @@ def post_release_to_discord(uri_scheme: str, chapter):
     em.set_image(url=chapter_1st_image)
 
     # Only ping if it is the first version of the chapter
-    ping_str = None if chapter.version else settings.DISCORD_PING
+    ping_str = None if chapter.version else settings.DISCORD_PING_QC_ROLE
     webhook.send(content=ping_str, embed=em, username=settings.DISCORD_USERNAME, avatar_url=site_log_url)
+
+
+def post_release_to_discord(uri_scheme: str, chapter):
+    webhook_url = settings.DISCORD_NSFW_RELEASE_WEBHOOK_URL if chapter.series.is_nsfw else settings.DISCORD_RELEASE_WEBHOOK_URL
+    if not webhook_url:
+        print("Discord webhook url for release is not set.")
+        return
+    webhook_id, webhook_token = get_webhook_id_token_from_url(webhook_url)
+    webhook = Webhook.partial(webhook_id, webhook_token, adapter=RequestsWebhookAdapter())
+
+    root = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}"
+    url = f"{root}{chapter.get_absolute_url()}"
+    series_url = f"{root}{chapter.series.get_absolute_url()}"
+    author_url = f"{root}{chapter.series.author.get_absolute_url()}"
+    artist_url = f"{root}{chapter.series.artist.get_absolute_url()}"
+    chapter_1st_image = f"{root}{chapter.first_page_absolute_url()}"
+    site_log_url = f"{root}/static/logo-mt-squared-small.png"
+
+    links = f"{url}\n"
+    if chapter.scraper_hash:
+        links += f"https://mangadex.org/chapter/{chapter.scraper_hash}\n" 
+    
+    title = f"{chapter.series.name} - {chapter.clean_title()}" if chapter.chapter_number == 0 and chapter.series.is_oneshot else f"{chapter.series.name} - Oneshot"
+    em = Embed(
+        color=0x000000,
+        title=title,
+        description=f"{links}\n"
+                    f"[Read other chapters]({series_url})\n"
+                    f"[Read other series by this author]({author_url})\n",
+        url=url,
+        timestamp=datetime.utcnow(),
+    )
+    em.set_author(name=f"{chapter.series.author.name}", url=author_url)
+
+    em.add_field(name='Author', value=f"[{chapter.series.author.name}]({author_url})", inline=True)
+    em.add_field(name='Artist', value=f"[{chapter.series.artist.name}]({artist_url})", inline=True)
+
+    em.set_image(url=chapter_1st_image)
+
+    ping_str = settings.DISCORD_PING_NEW_RELEASE
+    if chapter.series.is_oneshot and settings.DISCORD_PING_ONESHOT:
+        ping_str += " " + settings.DISCORD_PING_ONESHOT
+    if chapter.series.discord_role_id:
+        ping_str += f" <@&{chapter.series.discord_role_id}>"
+    summary_str = f" {title} by {chapter.series.author.name}"
+    webhook.send(content=ping_str + summary_str, embed=em, username=settings.DISCORD_USERNAME, avatar_url=site_log_url)
 
 
 def upload_new_chapter(request, series_slug):
@@ -206,8 +262,8 @@ def upload_new_chapter(request, series_slug):
         )
         save_zip_file(request.FILES["chapterPages"], chapter_folder, group_folder)
         chapter_post_process(ch_obj, is_update=is_update)
-        if "notifyOnDiscord" in request.POST and settings.DISCORD_WEBHOOK_TOKEN and request.POST["notifyOnDiscord"]:
-            post_release_to_discord(request.scheme, ch_obj)
+        if "notifyOnDiscord" in request.POST and request.POST["notifyOnDiscord"]:
+            post_prerelease_to_discord(request.scheme, ch_obj)
         return HttpResponse(
             json.dumps({"response": "success"}), content_type="application/json"
         )
@@ -223,6 +279,8 @@ def publish_chapter(request, series_slug, chapter):
         chapter = Chapter.objects.get(chapter_number=chapter, series=series)
         chapter.is_public = True
         chapter.save()
+        
+        post_release_to_discord(request.scheme, chapter)
         return HttpResponse(
             json.dumps({"response": "success"}), content_type="application/json"
         )

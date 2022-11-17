@@ -77,6 +77,7 @@ class Series(models.Model):
     scraping_uuid = models.CharField(max_length=200, blank=True, null=True)
     is_oneshot = models.BooleanField(default=False)
     is_nsfw = models.BooleanField(default=False)
+    discord_role_id = models.CharField(max_length=200, blank=True, null=True, help_text='To find the role id, enter \@TheRole on discord. Only enter numbers (e.g. <@&1234567890> => 1234567890)')
 
     def __str__(self):
         return self.name

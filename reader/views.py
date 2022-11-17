@@ -168,11 +168,11 @@ def series_page_data(series_slug, show_private_chapters=False):
             "relative_url": f"read/manga/{series.slug}/",
             "available_features": available_features,
             "reader_modifier": "read/manga",
-            "discord_notification_enabled": settings.DISCORD_WEBHOOK_TOKEN != "",
+            "discord_notification_enabled": settings.DISCORD_PRERELEASE_WEBHOOK_URL != "",
         }
         if series.scraping_uuid:
             series_page_dt["metadata"].append(["Link", 'On MangaDex', f"https://mangadex.org/title/{str(series.scraping_uuid)}"])
-        cache.set(f"series_page_dt_{series_slug}", series_page_dt, 3600 * 12)
+        cache.set(f"series_page_dt_{series_slug}_{show_private_chapters}", series_page_dt, 3600 * 12)
     return series_page_dt
 
 

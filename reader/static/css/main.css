@@ -244,6 +244,7 @@ header > h1 {
 	align-items: center;
 	min-height: 3rem;
 	box-sizing: border-box;
+	word-break: break-word;
 }
 header > h1 a {
 	color: inherit;

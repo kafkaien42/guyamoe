@@ -169,18 +169,21 @@ var reading_button = null;
 	});
 	
 	async function makePublic(chapter) {
-		let slug = "{{ slug }}";
-		let source = "{{ reader_modifier }}".split("/")[1];
-		let formData = new FormData();
-		formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
-		fetch(`/api/publish_chapter/{{ slug }}/${chapter}/`, {
-					method: "POST",
-					body: formData
-				}).then(data => data.json()).then(data => {
-				if (data['response'] == 'success') {
-					document.querySelector(`[data-chapter="${chapter}"]`).children[0].innerHTML = "";
-				}
-			});
+		if (confirm("Are you sure that you want to make this chapter public and post it in the release channel on Discord?\nNOTE: If you want to just make it public and NOT post it on Discord, check 'is public' in the admin panel."))
+		{
+			let slug = "{{ slug }}";
+			let source = "{{ reader_modifier }}".split("/")[1];
+			let formData = new FormData();
+			formData.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+			fetch(`/api/publish_chapter/{{ slug }}/${chapter}/`, {
+						method: "POST",
+						body: formData
+					}).then(data => data.json()).then(data => {
+					if (data['response'] == 'success') {
+						document.querySelector(`[data-chapter="${chapter}"]`).children[0].innerHTML = "";
+					}
+				});
+		}
 	}
 
 	function loadGroups(slug) {
@@ -674,7 +677,7 @@ var reading_button = null;
 						<thead>
 							<tr>
 								{% if "admin" in available_features %}
-									<th scope="col"><i class="fa fa-lock"></i></th>
+									<th scope="col"><i class="fa fa-lock" title="Is this chapter private?"></i></th>
 								{% endif %}
 								<th scope="col" class="read-icon" onclick="markAll(this)"></th>
 								<th scope="col">
@@ -698,7 +701,7 @@ var reading_button = null;
 								{% if "admin" in available_features %}
 									<td scope="row">
 										{% if not is_public %}
-											<a href="#" onclick="makePublic('{{ chapter }}')"><i class="chapter-is-private fa fa-lock" ></i></a>
+											<a href="#" onclick="makePublic('{{ chapter }}')" title="This chapter is private, click here to publish"><i class="chapter-is-private fa fa-lock" ></i></a>
 										{% endif %}
 									</td>
 								{% endif %}
