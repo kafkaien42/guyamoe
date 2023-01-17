@@ -21,6 +21,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "danke.moe",
     "localhost",
+    "danke.mangadex.dev",
 ]
 
 CANONICAL_SITE_NAME = "guya.moe"

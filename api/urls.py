@@ -21,7 +21,7 @@ urlpatterns = [
         name="api-chapter-upload",
     ),
     re_path(
-        r"^publish_chapter/(?P<series_slug>[\w-]+)/(?P<chapter>[\d-]{1,9})",
+        r"^publish_chapter/(?P<series_slug>[\w-]+)/(?P<chapter>(\d+(\.\d+)?))",
         views.publish_chapter,
         name="api-publish-chapter",
     ),

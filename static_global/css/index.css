@@ -1101,6 +1101,7 @@ main a {
 	color: white;
 	font-size: 2em;
 	margin-bottom: 0.5em;
+	word-break: break-word;
 }
 .page-series article h2 {
 	font-size: 0.9em;

@@ -144,11 +144,21 @@ def sort_naturally_input_filenames(filenames):
     return natsort.natsorted(filenames, alg=natsort.PATH | natsort.IGNORECASE | natsort.FLOAT)
 
 
+def is_valid_regular_file(filepath: str):
+    # Must have an extension, not be part of Mac OS's hidden file and not have relative folder
+    return '.' in filepath and '__MACOSX' not in filepath and '../' not in filepath
+
+
 def save_zip_file(input_zip_file, chapter_folder, group_folder):
     with zipfile.ZipFile(input_zip_file) as zip_file:
         all_pages = sort_naturally_input_filenames(zip_file.namelist())
+        
+        # remove invalid file path
+        all_pages = filter(is_valid_regular_file, all_pages)
+    
         padding = len(str(len(all_pages)))
         for idx, page in enumerate(all_pages):
+            print(page)
             extension = page.rsplit(".", 1)[1]
             page_file = f"{str(idx+1).zfill(padding)}.{extension}"
             with open(
@@ -224,7 +234,7 @@ def post_release_to_discord(uri_scheme: str, chapter):
     if chapter.scraper_hash:
         links += f"https://mangadex.org/chapter/{chapter.scraper_hash}\n" 
     
-    title = f"{chapter.series.name} - {chapter.clean_title()}" if chapter.chapter_number == 0 and chapter.series.is_oneshot else f"{chapter.series.name} - Oneshot"
+    title =  f"{chapter.series.name} - Oneshot" if chapter.chapter_number == 0 and chapter.series.is_oneshot else f"{chapter.series.name} - {chapter.clean_title()}"
     em = Embed(
         color=0x000000,
         title=title,
