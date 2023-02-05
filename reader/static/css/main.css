@@ -1915,7 +1915,7 @@ _:-webkit-full-screen:not(:root:root), .fit-height_limit .rdr-image-wrap .Reader
 .Loadable.loading:after {
 	min-height: 6rem;
 	display: flex;
-	background-image: url(../img/fujiload.png);
+	background-image: url(/static/img/fujiload.png);
 	animation: weewoo 1s infinite;
 }
 

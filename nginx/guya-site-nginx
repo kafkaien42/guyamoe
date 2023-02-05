@@ -2,6 +2,10 @@ upstream guyamoe {
     server unix:///home/ubuntu/guyamoe/nginx/socket/guya.sock; # for a file socket
 }
 
+log_format mtail '$host $remote_addr - $remote_user [$time_local] '
+                 '"$request" $status $body_bytes_sent $request_time '
+                 '"$http_referer" "$http_user_agent" "$content_type" "$upstream_cache_status"';
+
 server {
     if ($host = danke.moe) {
         return 301 https://$host$request_uri;
@@ -71,6 +75,9 @@ server {
         uwsgi_pass guyamoe;
         include /home/ubuntu/guyamoe/nginx/uwsgi_params;
     }
+
+    # I'm using mtail to parse the access log to monitor the website
+    access_log /var/log/nginx/access.log mtail;
 
     listen [::]:443 ssl ipv6only=on; # managed by Certbot
     listen 443 ssl; # managed by Certbot

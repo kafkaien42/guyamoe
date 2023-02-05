@@ -77,6 +77,7 @@ header {
 .navbar-brand-logo img {
 	max-height: 4.3rem;
 	width: auto;
+	margin-left: -1rem;
 }
 
 
@@ -151,6 +152,10 @@ header {
 	}
 	
 	.navbar-collapse {
+	}
+
+	.navbar{
+		padding: 0.4rem 0;
 	}
 
 	.navbar-collapse.collapsing,
@@ -300,7 +305,7 @@ header {
 
 .enter-key:before {
 	content:"";
-	background: url(../img/send.svg) no-repeat;
+	background: url(/static/img/send.svg) no-repeat;
 	background-size: 70%;
 	background-position: center center;
 	width: 1.4rem;
@@ -727,9 +732,9 @@ main a {
 	text-shadow: 0 0 1px black, 0 0 1px black, 0 0 1px black; 
 }
 
-.manga-link.guya:before {
-	background-image: url('../logo_small.png');
-}
+/* .manga-link.guya:before {
+	background-image: url('/static/logo_small.png');
+} */
 
 .chapter-listing-expander {
 	border-top: 1px solid rgba(255,255,255,0.5);

@@ -154,7 +154,7 @@ def save_zip_file(input_zip_file, chapter_folder, group_folder):
         all_pages = sort_naturally_input_filenames(zip_file.namelist())
         
         # remove invalid file path
-        all_pages = filter(is_valid_regular_file, all_pages)
+        all_pages = list(filter(is_valid_regular_file, all_pages))
     
         padding = len(str(len(all_pages)))
         for idx, page in enumerate(all_pages):
@@ -252,6 +252,8 @@ def post_release_to_discord(uri_scheme: str, chapter):
     em.set_image(url=chapter_1st_image)
 
     ping_str = settings.DISCORD_PING_NEW_RELEASE
+    if chapter.series.is_nsfw:
+        ping_str += " " + settings.DISCORD_PING_NEW_NSFW_RELEASE
     if chapter.series.is_oneshot and settings.DISCORD_PING_ONESHOT:
         ping_str += " " + settings.DISCORD_PING_ONESHOT
     if chapter.series.discord_role_id:
