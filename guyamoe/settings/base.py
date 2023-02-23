@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "homepage.apps.HomepageConfig",
     "mangadex.apps.MangadexConfig",
     "misc.apps.MiscConfig",
-    "proxy.apps.ProxyConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

@@ -26,7 +26,6 @@ from homepage.sitemaps import (
     SeriesViewSitemap,
     StaticViewSitemap,
 )
-from proxy import sources
 
 sitemaps = {
     "static": StaticViewSitemap,
@@ -44,13 +43,6 @@ urlpatterns = [
     path("read/", include("reader.urls")),
     path("api/", include("api.urls")),
     path("pages/", include("misc.urls")),
-    path(
-        "",
-        include(
-            [route for source in sources for route in source.register_shortcut_routes()]
-        ),
-    ),
-    path("proxy/", include("proxy.urls")),
 ]
 
 # Importer/Exporter is not included in the repo and is distributed using a different license
