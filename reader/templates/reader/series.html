@@ -438,6 +438,12 @@ var reading_button = null;
 		filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='4');
 	}
 
+	#scanGroup
+	{
+		width: inherit;
+		form-control-sm;
+	}
+
 </style>
 {{ chapter_list | json_script:'chapter-list-as-json' }}
 <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -488,7 +494,7 @@ var reading_button = null;
 						</div>
 					</div>
 					<div class="row mt-4">
-						<div class="col-7">
+						<div class="col">
 							<label for="scanGroup" >Group</label>
 							<div class="input-group">
 								<select required class="form-control-sm" name="scanGroup" id="scanGroup">
