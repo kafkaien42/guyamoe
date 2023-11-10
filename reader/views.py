@@ -109,7 +109,8 @@ def series_page_data(series_slug, show_private_chapters=False):
                     chapter.volume or "null",
                     id_to_hit_count.get(int(chapter.id), 0),
                     chapter.scraper_hash,
-                    chapter.is_public
+                    chapter.is_public,
+                    chapter.get_absolute_url() if chapter.is_public else chapter.get_private_absolute_url()
                 ]
             )
             volume_dict[chapter.volume].append(

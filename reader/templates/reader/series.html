@@ -3,6 +3,7 @@
 <title>Read {{ series }} | {{ brand.name }}</title>
 <meta name="twitter:description" content="Read {{ series }} manga series by {{ author }}" />
 <meta property="og:description" content="Read {{ series }} manga series by {{ author }}" />
+<meta property="og:site_name" content="{{ brand.name }}">
 <meta name="description" content="Read {{ series }} manga series by {{ author }}.{{ alt_titles_str|safe }}" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Read {{ series }} | {{ brand.name }}" />
@@ -441,7 +442,6 @@ var reading_button = null;
 	#scanGroup
 	{
 		width: inherit;
-		form-control-sm;
 	}
 
 </style>
@@ -702,7 +702,7 @@ var reading_button = null;
 							</tr>
 						</thead>
 						<tbody id="chapterTable">
-							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, hit_counts, md_uuid, is_public in chapter_list %}
+							{% for chapter_list_value, chapter, title, ch_slug, group, upload_date, volume, hit_counts, md_uuid, is_public, url in chapter_list %}
 							<tr class="table-default" data-chapter="{{ chapter }}">
 								{% if "admin" in available_features %}
 									<td scope="row">
@@ -713,7 +713,7 @@ var reading_button = null;
 								{% endif %}
 								<td scope="row" class="read-icon" onclick="updateRead('{{ chapter }}')"></td>
 								<td scope="row" class="chapter-title">
-									<a href="/{{ reader_modifier }}/{{ slug }}/{{ ch_slug }}/1/">
+									<a href="{{url}}">
 										{% if chapter_list_value %}
 										{{ chapter_list_value }}
 										{% endif %}

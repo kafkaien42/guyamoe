@@ -26,6 +26,7 @@
   <meta property="og:image" content="{{ cover }}">
   <meta name="twitter:image" content="{{ cover }}">
   {% endif %}
+  <meta property="og:site_name" content="{{ brand.name }}">
   <meta property="og:url" content="{{ absolute_url }}">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css"/>
@@ -47,6 +48,7 @@
   const IS_INDEXED = {{ indexed|yesno:"true,false,false" }};
   const IMAGE_PROXY_URL = "{{ image_proxy_url }}";
   const ENABLE_DOWNLOAD = {{ can_download|yesno:"true,false,false" }};
+  const SHOW_PRIVATE_CHAPTERS = /[?&]showprivate=/.test(location.search);
 
 {% if is_nsfw %}
   const IS_NSFW = true;

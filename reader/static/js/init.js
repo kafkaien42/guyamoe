@@ -120,10 +120,21 @@ function ReaderAPI(o) {
 			.then(response => response.json())
 			.then(seriesData => {
 				seriesData = this.infuseSeriesData(seriesData);
+				if (!SHOW_PRIVATE_CHAPTERS)
+				{
+					seriesData.chapters = Object.keys(seriesData.chapters).reduce(function (filtered, key) {
+						if (seriesData.chapters[key].is_public)
+						{
+							filtered[key] = seriesData.chapters[key];
+						}
+						return filtered;
+					}, {});
+				}
 				seriesData.chaptersIndex =
 					Object.keys(
 						seriesData.chapters
 					).sort((a,b) => parseFloat(a) - parseFloat(b));
+
 				seriesData.volMap = {};
 				for (var i = 0; i < seriesData.chaptersIndex.length; i++) {
 					if(!seriesData.volMap[seriesData.chapters[seriesData.chaptersIndex[i]].volume])

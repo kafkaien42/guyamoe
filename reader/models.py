@@ -1,6 +1,8 @@
 import os
 from datetime import datetime, timezone
 from random import randint
+import hashlib
+from typing import List
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -78,6 +80,7 @@ class Series(models.Model):
     is_oneshot = models.BooleanField(default=False)
     is_nsfw = models.BooleanField(default=False)
     discord_role_id = models.CharField(max_length=200, blank=True, null=True, help_text='To find the role id, enter \@TheRole on discord. Only enter numbers (e.g. <@&1234567890> => 1234567890)')
+    uploadable_to_tumblr = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -188,10 +191,11 @@ class Chapter(models.Model):
     def get_absolute_url(self):
         return f"/read/manga/{self.series.slug}/{Chapter.slug_chapter_number(self)}/1/"
 
+    def get_private_absolute_url(self):
+        return f"{self.get_absolute_url()}?showprivate={hashlib.md5(self.clean_title().encode()).hexdigest()}"
+
     def first_page_absolute_url(self):
-        chapter_folder_path = os.path.join(
-            "manga", self.series.slug, "chapters", self.folder, str(self.group.id)
-        )
+        chapter_folder_path = self.chapter_path_relative_to_media_root()
         # Use this if our png are not optimized enough and it is eating up our bandwidth
         # chapter_folder_path = os.path.join(
         #     "manga", series_slug, "chapters", chapter.folder, str(chapter.group.id) + "_shrunk"
@@ -200,13 +204,26 @@ class Chapter(models.Model):
         query_string = "" if not self.version else f"?v{self.version}"
         filenames = sorted(
             [
-                u + query_string
-                for u in os.listdir(
-                    os.path.join(settings.MEDIA_ROOT, chapter_folder_path)
-                )
+                filename + query_string
+                for filename in os.listdir(self.chapter_local_path())
             ]
         )
         return settings.MEDIA_URL + os.path.join(chapter_folder_path, filenames[0])
+    
+    def image_paths(self) -> List[str]:
+        chapter_folder_path = self.chapter_local_path()
+        return list(sorted(
+            [
+                os.path.join(chapter_folder_path, filename) for filename in os.listdir(chapter_folder_path)
+            ]
+        ))
+
+    def chapter_path_relative_to_media_root(self) -> str:
+        return os.path.join("manga", self.series.slug, "chapters", self.folder, str(self.group.id))
+
+    def chapter_local_path(self) -> str:
+        return os.path.join(settings.MEDIA_ROOT, self.chapter_path_relative_to_media_root())
+
     class Meta:
         ordering = ("chapter_number",)
         unique_together = (

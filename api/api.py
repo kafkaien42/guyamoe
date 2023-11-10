@@ -80,6 +80,7 @@ def series_data(series_slug):
                 "volume": str(chapter.volume),
                 "title": chapter.title,
                 "folder": chapter.folder,
+                "is_public": chapter.is_public,
                 "groups": {
                     str(chapter.group.id): sorted(
                         [
