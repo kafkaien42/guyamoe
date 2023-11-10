@@ -33,7 +33,7 @@ def publish_post(uri_scheme: str, chapter: Chapter) -> Optional[str]:
     root = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}"
     caption = f"###Artist: {chapter.series.author.name}"
     if not chapter.series.is_oneshot:
-        caption += f"\n[Other chapters]({root}{chapter.series.get_absolute_url()})" 
+        caption += f"\n[Other chapters]({root}{chapter.series.get_absolute_url()})"
     if chapter.scraper_hash:
         caption += f"\n[Read on MangaDex](https://mangadex.org/chapter/{chapter.scraper_hash})\n"
     caption += f"\n[Read on Danke.moe]({root}{chapter.get_absolute_url()})"
