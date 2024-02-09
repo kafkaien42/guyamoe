@@ -196,7 +196,7 @@ def post_prerelease_to_discord(uri_scheme: str, chapter):
 
     em = Embed(
         color=0x000000,
-        title=f"Please PR this new release!  Chapter {chapter.clean_chapter_number()} {version_label} of {chapter.series.name}",
+        title=f"Ch. {chapter.clean_chapter_number()} {version_label} of {chapter.series.name} -  Please PR this new release!",
         description=f"{url}\n\n"
                     f"[Read other chapters]({series_url})\n"
                     f"[Read other series by this author]({author_url})\n\n"
