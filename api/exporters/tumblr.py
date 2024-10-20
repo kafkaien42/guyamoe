@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 from reader.models import Chapter, ChapterIndex, Group, Series, Volume
 
+MAX_NUMBER_IMAGE_PER_POST = 10
 
 def get_tumblr_credentials() -> Optional[Tuple[str, str, str, str, str]]:
     if not settings.TUMBLR_CREDENTIALS:
@@ -39,8 +40,9 @@ def publish_post(uri_scheme: str, chapter: Chapter) -> Optional[str]:
     caption += f"\n[Read on Danke.moe]({root}{chapter.get_absolute_url()})"
 
     if chapter.series.uploadable_to_tumblr:
+        image_paths = chapter.image_paths()
         res = client.create_photo(blog_name, state="published", tags=["manga", "scanlation"], format="markdown",
-                        data=chapter.image_paths(),
+                        data=image_paths[:MAX_NUMBER_IMAGE_PER_POST],
                         caption=f"##{title}\n" + caption)
     else:
         res = client.create_link(blog_name, state="published", tags=["manga", "scanlation"], format="markdown",

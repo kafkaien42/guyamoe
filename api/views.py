@@ -14,6 +14,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 import api.exporters.tumblr as tumblr
+import api.exporters.bluesky as bluesky
 
 from reader.models import Chapter, ChapterIndex, Group, Series, Volume, Person
 from reader.users_cache_lib import get_user_ip
@@ -217,7 +218,7 @@ def post_prerelease_to_discord(uri_scheme: str, chapter):
     webhook.send(content=ping_str, embed=em, username=settings.DISCORD_USERNAME, avatar_url=site_log_url)
 
 
-def post_release_to_discord(uri_scheme: str, chapter: Chapter, tumblr_post_url: Optional[str]):
+def post_release_to_discord(uri_scheme: str, chapter: Chapter, tumblr_post_url: Optional[str], bluesky_post_url: Optional[str]):
     webhook_url = settings.DISCORD_NSFW_RELEASE_WEBHOOK_URL if chapter.series.is_nsfw else settings.DISCORD_RELEASE_WEBHOOK_URL
     if not webhook_url:
         print("Discord webhook url for release is not set.")
@@ -238,6 +239,8 @@ def post_release_to_discord(uri_scheme: str, chapter: Chapter, tumblr_post_url: 
         links += f"https://mangadex.org/chapter/{chapter.scraper_hash}\n" 
     if tumblr_post_url:
         links += f"{tumblr_post_url}\n" 
+    if bluesky_post_url:
+        links += f"{bluesky_post_url}\n" 
 
     
     title =  f"{chapter.series.name} - Oneshot" if chapter.chapter_number == 0 and chapter.series.is_oneshot else f"{chapter.series.name} - {chapter.clean_title()}"
@@ -299,9 +302,11 @@ def publish_chapter(request, series_slug, chapter):
         chapter.save()
         
         tumblr_post_url = None
+        bluesky_post_url = None
         if not series.is_nsfw:
             tumblr_post_url = tumblr.publish_post(request.scheme, chapter)
-        post_release_to_discord(request.scheme, chapter, tumblr_post_url)
+            bluesky_post_url = bluesky.publish_post(request.scheme, chapter)
+        post_release_to_discord(request.scheme, chapter, tumblr_post_url, bluesky_post_url)
         return HttpResponse(
             json.dumps({"response": "success"}), content_type="application/json"
         )

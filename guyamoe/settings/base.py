@@ -173,6 +173,9 @@ DISCORD_PRERELEASE_MESSAGE = "If you found an issue with this release <:bonk:807
 # These 5 parameters must be separated by ":".
 TUMBLR_CREDENTIALS = os.environ.get("TUMBLR_CREDENTIALS", "")
 
+BLUESKY_USERNAME = os.environ.get("BLUESKY_USERNAME", "")
+BLUESKY_PASSWORD = os.environ.get("BLUESKY_PASSWORD", "")
+
 BRANDING_NAME = "Danke fürs Lesen"
 BRANDING_DESCRIPTION = "Thank you for reading! A circle that works on random twitter and pixiv one-shots and the occasional cute manga."
 BRANDING_IMAGE_URL = "https://danke.moe/static/img/thumbnail.png"
