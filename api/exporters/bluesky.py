@@ -7,6 +7,7 @@ from PIL import Image
 import io
 
 BLUESKY_MAX_UPLOAD_BYTES = 1_000_000
+BLUESKY_DOMAIN = "https://bsky.app"
 
 def is_bluesky_supported() -> bool:
     return settings.BLUESKY_USERNAME and settings.BLUESKY_PASSWORD
@@ -74,4 +75,8 @@ def publish_post(uri_scheme: str, chapter: Chapter) -> Optional[str]:
     except Exception as err:
         print(f"Caught exception while publishing bluesky post: {err}")
         return
-    return str(post.uri)
+    # example: at://did:plc:6jtoersycyp4weozwep27zaa/app.bsky.feed.post/3l72mezg7da2o
+    uri = str(post.uri)
+    _, _, path = uri.rpartition("app.bsky.feed.post/")
+    # example: https://bsky.app/profile/danke.moe/post/3l72mezg7da2o
+    return f"{BLUESKY_DOMAIN}/profile/{settings.BLUESKY_USERNAME}/post/{path}"
