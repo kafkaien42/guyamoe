@@ -19,7 +19,7 @@ def upload_thumbnail_preview(client: Client, chapter: Chapter):
     local_path_to_first_page = os.path.join(chapter.chapter_local_path(), filenames[0])
     
     try:
-        img = Image.open(local_path_to_first_page)
+        img = Image.open(local_path_to_first_page).convert('RGB')
     except:
         print(f"Failed to open chapter's first page {local_path_to_first_page}")
         return
