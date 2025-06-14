@@ -208,7 +208,10 @@ class Chapter(models.Model):
                 for filename in os.listdir(self.chapter_local_path())
             ]
         )
-        return settings.MEDIA_URL + os.path.join(chapter_folder_path, filenames[0])
+        if filenames:
+            return settings.MEDIA_URL + os.path.join(chapter_folder_path, filenames[0])
+        # Return something if there are no page
+        return "/static/img/bg_box_blur_smol.jpg"
     
     def image_paths(self) -> List[str]:
         chapter_folder_path = self.chapter_local_path()

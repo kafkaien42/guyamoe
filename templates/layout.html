@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html class="{{ template }} h-100" lang="en" class="bg-dark h-100">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,9 +9,12 @@
 	<!-- <link rel="stylesheet" href="{% static 'css/index.css' %}{{ version_query }}"> -->
 	<link rel="canonical" href="{{ absolute_url }}" />
 	<link rel="manifest" href="{% static 'manifest.json' %}{{ version_query }}">
-	<link rel="shortcut icon" sizes="128x128" type="image/png" href="{% static 'logo-mt-squared-small.png' %}{{ version_query }}" defer />
-	<link rel="icon" sizes="128x128" type="image/png" href="{% static 'logo-mt-squared-small.png' %}{{ version_query }}" />
-	<link rel="icon" sizes="512x512" type="image/png" href="{% static 'logo-mt-squared-large.png' %}{{ version_query }}" />
+	<link rel="shortcut icon" sizes="128x128" type="image/png"
+		href="{% static 'logo-mt-squared-small.png' %}{{ version_query }}" defer />
+	<link rel="icon" sizes="128x128" type="image/png"
+		href="{% static 'logo-mt-squared-small.png' %}{{ version_query }}" />
+	<link rel="icon" sizes="512x512" type="image/png"
+		href="{% static 'logo-mt-squared-large.png' %}{{ version_query }}" />
 	<link rel="apple-touch-icon" sizes="128x128" href="{% static 'safari-touch-128x128.png' %}{{ version_query }}" />
 	<link rel="apple-touch-icon" sizes="256x256" href="{% static 'safari-touch-256x256.png' %}{{ version_query }}" />
 	<link rel="apple-touch-icon" sizes="512x512" href="{% static 'safari-touch-512x512.png' %}{{ version_query }}" />
@@ -21,29 +25,29 @@
 	<meta name="google-site-verification" content="QpnvbBE-TzYhqCCgViBhlBR2cGl7HXNUpN2Yu67a8z8" />
 	{% block meta %}
 	{% if template == "home" %}
-		<title>{{ home_brand.name }}</title>
-		<meta name="twitter:description" content="{{ home_brand.description }}" />
-		<meta property="og:description" content="{{ home_brand.description }}" />
-		<meta name="description" content="{{ home_brand.description }}">
+	<title>{{ home_brand.name }}</title>
+	<meta name="twitter:description" content="{{ home_brand.description }}" />
+	<meta property="og:description" content="{{ home_brand.description }}" />
+	<meta name="description" content="{{ home_brand.description }}">
 	{% else %}
-		{% if page_title %}
-			<title>{{ page_title }} | {{ brand.name }}</title>
-			<meta name="twitter:title" content="{{ page_title }} | {{ brand.name }}" />
-		{% else %}
-			<title>{{ brand.name }}</title>
-  			<meta name="twitter:title" content="{{ brand.name }}" />
-		{% endif %}
-		<meta name="twitter:description" content="{% firstof page_description brand.description %}" />
-		<meta property="og:description" content="{% firstof page_description brand.description %}" />
-		<meta name="description" content="{% firstof page_description brand.description %}">
+	{% if page_title %}
+	<title>{{ page_title }} | {{ brand.name }}</title>
+	<meta name="twitter:title" content="{{ page_title }} | {{ brand.name }}" />
+	{% else %}
+	<title>{{ brand.name }}</title>
+	<meta name="twitter:title" content="{{ brand.name }}" />
+	{% endif %}
+	<meta name="twitter:description" content="{% firstof page_description brand.description %}" />
+	<meta property="og:description" content="{% firstof page_description brand.description %}" />
+	<meta name="description" content="{% firstof page_description brand.description %}">
 	{% endif %}
 
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:image" content="{{ brand.image_url }}" />
-  <meta property="og:image" content="{{ brand.image_url }}">
-  <meta property="og:url" content="{{ absolute_url }}">
-  <meta property="og:site_name" content="{{ brand.name }}">
-  {% endblock %}
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:image" content="{{ brand.image_url }}" />
+	<meta property="og:image" content="{{ brand.image_url }}">
+	<meta property="og:url" content="{{ absolute_url }}">
+	<meta property="og:site_name" content="{{ brand.name }}">
+	{% endblock %}
 	{% block head %} {% endblock %}
 </head>
 
@@ -57,70 +61,80 @@
 				<a class="navbar-brand-logo col-lg-2" href="/" rel="home">
 					<img width="600" height="250" src="{% static 'img/logo-mt.png' %}" alt="Danke.moe">
 				</a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse col-lg-8" id="navbarSupportedContent">
 					<ul class="navbar-nav">
 						<li class="nav-item">
 							<a class="nav-link" href="/" id="ongoingManga">
-							All
+								All
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="/series/" id="seriesManga">
-							Series
+								Series
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="/oneshots/" id="oneshotManga">
-							Oneshots
+								Oneshots
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="/latest_chapters/" id="chaptersManga">
-							Latest Chapters
+								Latest Chapters
 							</a>
 						</li>
 						<li class="nav-item ">
 							<a class="nav-link" href="/random/" id="randomManga">
-							Random Chapter
+								Random Chapter
 							</a>
 						</li>
 						<li class="nav-item ">
 							<a class="nav-link" href="/nsfw/" id="nsfwManga">
-							NSFW <span class="badge badge-danger">18+</span>
+								NSFW <span class="badge badge-danger">18+</span>
 							</a>
 						</li>
 						<div class="pusher"></div>
 						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" id="About" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">About</a>
+							<a class="nav-link dropdown-toggle" href="#" id="About" role="button" data-toggle="dropdown"
+								aria-haspopup="true" aria-expanded="false">About</a>
 							<div class="dropdown-menu" aria-labelledby="About">
 								<a class="dropdown-item" href="/about/">About</a>
-								<a class="dropdown-item" href="https://tachiyomi.org/extensions/#en.dankefurslesen">Tachiyomi Extension</a>
+								<a class="dropdown-item"
+									href=" https://keiyoushi.github.io/extensions/#en.dankefurslesen">Keiyoushi
+									Extension</a>
 								<a class="dropdown-item" href="https://github.com/kafkaien42/guyamoe">Source Code</a>
 							</div>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="https://discord.com/invite/nxkDPvDhgv"><img width="24" height="24" alt="Discord" src="/static/img/discord.svg"></img>
+							<a class="nav-link" href="https://discord.com/invite/nxkDPvDhgv"><img width="24" height="24"
+									alt="Discord" src="/static/img/discord.svg"></img>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="/reader/other/rss/all" target="_blank"><img width="22" height="22" alt="RSS" src="/static/img/rss.svg"></a>
+							<a class="nav-link" href="/reader/other/rss/all" target="_blank"><img width="22" height="22"
+									alt="RSS" src="/static/img/rss.svg"></a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="https://bsky.app/profile/dflmanga.bsky.social"><img width="24" height="24" alt="BlueSky" src="/static/img/bsky.svg"></img>
+							<a class="nav-link" href="https://bsky.app/profile/danke.moe"><img width="24" height="24"
+									alt="BlueSky" src="/static/img/bsky.svg"></img>
 							</a>
 						</li>
 						<li class="nav-item">
 							<div id="rs-widget"></div>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="https://www.tumblr.com/danke-furs-lesen"><img width="24" height="24" alt="Tumblr" src="/static/img/tumblr.svg"></img>
+							<a class="nav-link" href="https://www.tumblr.com/danke-furs-lesen"><img width="24"
+									height="24" alt="Tumblr" src="/static/img/tumblr.svg"></img>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="https://twitter.com/DfLmanga"><img width="24" height="24" alt="Twitter" src="/static/img/twitter.svg"></img>
+							<a class="nav-link" href="https://twitter.com/DfLmanga"><img width="24" height="24"
+									alt="Twitter" src="/static/img/twitter.svg"></img>
 							</a>
 						</li>
 					</ul>
@@ -145,7 +159,7 @@
 			} else {
 
 				if (document.location.pathname === link.pathname)
-				// if (document.location.href.indexOf(link.href) > -1)
+					// if (document.location.href.indexOf(link.href) > -1)
 					link.classList.add('s')
 			}
 		});
@@ -153,13 +167,13 @@
 	{% endcache %} {% block body %} {% endblock %}
 	<script>
 		isiOSAux = (window.navigator.standalone == true);
-		if(isiOSAux) {
+		if (isiOSAux) {
 			var aList = document.getElementsByTagName("a");
-			for(var i=0; i<aList.length; i++) {
-				if(!aList[i].onclick
-				&& aList[i].href.length > 0
-				&& aList[i].href.indexOf(document.location.origin) > -1) {
-					aList[i].onclick = function() {
+			for (var i = 0; i < aList.length; i++) {
+				if (!aList[i].onclick
+					&& aList[i].href.length > 0
+					&& aList[i].href.indexOf(document.location.origin) > -1) {
+					aList[i].onclick = function () {
 						window.location = this.getAttribute("href");
 						return false;
 					}
@@ -167,14 +181,19 @@
 			}
 		}
 	</script>
-<footer>
-	<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="{% static 'js/jquery.min.js' %}"></script>
-	<script src="{% static 'js/alg_lib.js' %}{{ version_query }}"></script>
-	<!-- <script defer src="{% static 'js/bootstrap.min.js' %}"></script> -->
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	{% include "history.html" %}
-	{% block footer %} {% endblock %}
-</footer>
+	<footer>
+		<link defer rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<script src="{% static 'js/jquery.min.js' %}"></script>
+		<script src="{% static 'js/fuzzysort.min.js' %}"></script>
+		<script src="{% static 'js/alg_lib.js' %}{{ version_query }}"></script>
+		<!-- <script defer src="{% static 'js/bootstrap.min.js' %}"></script> -->
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+			integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+			crossorigin="anonymous"></script>
+		{% include "history.html" %}
+		{% block footer %} {% endblock %}
+	</footer>
 </body>
+
 </html>

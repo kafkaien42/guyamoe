@@ -228,15 +228,20 @@ def create_preview_pages(chapter_folder, group_folder, page_file):
     if shrunk.width > shrunk.height:
         if "_w." not in page_file:
             page_file = page_name + "_w." + ext
-            shrunk.save(os.path.join(chapter_folder, group_folder, page_file))
-            os.remove(os.path.join(chapter_folder, group_folder, page_name + "." + ext))
-            shrunk = Image.open(os.path.join(chapter_folder, group_folder, page_file))
+            new_path = os.path.join(chapter_folder, group_folder, page_file)
+            shutil.move(path_to_image, new_path)
+            # shrunk.save(os.path.join(chapter_folder, group_folder, page_file))
+            # os.remove(os.path.join(chapter_folder, group_folder, page_name + "." + ext))
+            shrunk = Image.open(new_path)
     else:
         if "_w." in page_file:
             page_file = page_file.replace("_w", "")
-            shrunk.save(os.path.join(chapter_folder, group_folder, page_file))
-            os.remove(os.path.join(chapter_folder, group_folder, page_name + "." + ext))
-            shrunk = Image.open(os.path.join(chapter_folder, group_folder, page_file))
+            new_path = os.path.join(chapter_folder, group_folder, page_file)
+            shutil.move(path_to_image, new_path)
+            # shrunk.save(os.path.join(chapter_folder, group_folder, page_file))
+            # os.remove(os.path.join(chapter_folder, group_folder, page_name + "." + ext))
+            # shrunk = Image.open(os.path.join(chapter_folder, group_folder, page_file))
+            shrunk = Image.open(new_path)
     blur = Image.open(os.path.join(chapter_folder, group_folder, page_file))
     shrunk = shrunk.convert("RGB")
     blur = blur.convert("RGB")
