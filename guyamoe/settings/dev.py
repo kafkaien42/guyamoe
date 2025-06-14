@@ -40,7 +40,7 @@ CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache",}
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("DEV_DB_NAME"),
         "USER": os.environ.get("DEV_DB_USER"),
         "PASSWORD": os.environ.get("DEV_DB_PASS"),

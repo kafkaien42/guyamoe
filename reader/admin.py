@@ -8,6 +8,7 @@ from .models import Chapter, Group, HitCount, Person, Series, Volume
 
 
 
+@admin.register(HitCount)
 class HitCountAdmin(admin.ModelAdmin):
     ordering = ("hits",)
     list_display = (
@@ -25,9 +26,9 @@ class HitCountAdmin(admin.ModelAdmin):
         else:
             return obj
 
-admin.site.register(HitCount, HitCountAdmin)
 
 
+@admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     ordering = ("name",)
     list_display = (
@@ -40,9 +41,9 @@ class PersonAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Person, PersonAdmin)
 
 
+@admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -50,9 +51,9 @@ class GroupAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Group, GroupAdmin)
 
 
+@admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
     form = SeriesForm
     list_display = ("name", "author")
@@ -79,9 +80,9 @@ class SeriesAdmin(admin.ModelAdmin):
         return form
 
 
-admin.site.register(Series, SeriesAdmin)
 
 
+@admin.register(Volume)
 class VolumeAdmin(admin.ModelAdmin):
     search_fields = (
         "volume_number",
@@ -103,9 +104,9 @@ class VolumeAdmin(admin.ModelAdmin):
             return ("volume_cover",)
 
 
-admin.site.register(Volume, VolumeAdmin)
 
 
+@admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
     form = ChapterForm
     search_fields = (
@@ -167,4 +168,3 @@ as time_since_change
     ordering = ("-uploaded_on", "-updated_on")
 
 
-admin.site.register(Chapter, ChapterAdmin)

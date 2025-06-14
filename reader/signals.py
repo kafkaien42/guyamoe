@@ -190,7 +190,7 @@ def save_volume(sender, instance, **kwargs):
             method=6,
         )
         shrunk = image.convert("RGB")
-        shrunk.thumbnail((700, shrunk.height), Image.ANTIALIAS)
+        shrunk.thumbnail((700, shrunk.height), Image.LANCZOS)
         shrunk.save(
             os.path.join(settings.MEDIA_ROOT, save_dir, f"{filename}_shrunk.webp"),
             lossless=False,
@@ -201,7 +201,7 @@ def save_volume(sender, instance, **kwargs):
         # image.save(os.path.join(settings.MEDIA_ROOT, save_dir, f"{filename}.jp2"))
         blur = Image.open(os.path.join(settings.MEDIA_ROOT, save_dir, vol_cover))
         blur = blur.convert("RGB")
-        blur.thumbnail((blur.width / 8, blur.height / 8), Image.ANTIALIAS)
+        blur.thumbnail((blur.width / 8, blur.height / 8), Image.LANCZOS)
         blur = blur.filter(ImageFilter.GaussianBlur(radius=4))
         blur.save(
             os.path.join(settings.MEDIA_ROOT, save_dir, f"{filename}_blur.{ext}"),

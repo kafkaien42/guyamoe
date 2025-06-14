@@ -24,7 +24,7 @@ def upload_thumbnail_preview(client: Client, chapter: Chapter):
         print(f"Failed to open chapter's first page {local_path_to_first_page}")
         return
     
-    img.thumbnail((img.width, 512), Image.ANTIALIAS)
+    img.thumbnail((img.width, 512), Image.LANCZOS)
     img_byte_arr = io.BytesIO()
     img.save(
         img_byte_arr,

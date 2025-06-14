@@ -45,8 +45,8 @@ urlpatterns = [
         name="reader-series-chapter",
     ),
     re_path(r"^update_view_count/", views.hit_count, name="reader-view-count"),
-    re_path(
-        r"^other/rss/all$",
+    path(
+        "other/rss/all",
         cache_control(
             public=True, max_age=600, s_maxage=600
         )(  # Cache control for CF, etag for RSS readers

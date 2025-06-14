@@ -5,6 +5,7 @@ from .models import Page, Static, Variable
 # Register your models here.
 
 
+@admin.register(Page)
 class PageAdmin(admin.ModelAdmin):
     search_fields = (
         "page_title",
@@ -20,6 +21,7 @@ class PageAdmin(admin.ModelAdmin):
     filter_horizontal = ("variable",)
 
 
+@admin.register(Static)
 class StaticAdmin(admin.ModelAdmin):
     search_fields = ("page__page_title",)
     list_display = (
@@ -28,6 +30,4 @@ class StaticAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Page, PageAdmin)
 admin.site.register(Variable)
-admin.site.register(Static, StaticAdmin)

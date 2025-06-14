@@ -245,8 +245,8 @@ def create_preview_pages(chapter_folder, group_folder, page_file):
     blur = Image.open(os.path.join(chapter_folder, group_folder, page_file))
     shrunk = shrunk.convert("RGB")
     blur = blur.convert("RGB")
-    shrunk.thumbnail((shrunk.width, 250), Image.ANTIALIAS)
-    blur.thumbnail((blur.width / 8, blur.height / 8), Image.ANTIALIAS)
+    shrunk.thumbnail((shrunk.width, 250), Image.LANCZOS)
+    blur.thumbnail((blur.width / 8, blur.height / 8), Image.LANCZOS)
     shrunk.save(
         os.path.join(chapter_folder, f"{group_folder}_shrunk", page_file),
         "JPEG",

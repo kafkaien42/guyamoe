@@ -7,7 +7,7 @@ import zipfile
 from datetime import datetime
 
 import natsort
-from discord import Embed, RequestsWebhookAdapter, Webhook
+from discord import Embed, SyncWebhook, Webhook
 from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -184,7 +184,7 @@ def post_prerelease_to_discord(uri_scheme: str, chapter):
         print("Discord webhook url for prerelease is not set.")
         return
     webhook_id, webhook_token = get_webhook_id_token_from_url(settings.DISCORD_NSFW_PRERELEASE_WEBHOOK_URL if chapter.series.is_nsfw else settings.DISCORD_PRERELEASE_WEBHOOK_URL)
-    webhook = Webhook.partial(webhook_id, webhook_token, adapter=RequestsWebhookAdapter())
+    webhook = SyncWebhook .partial(webhook_id, webhook_token)
 
     root = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}"
     url = f"{root}{chapter.get_absolute_url()}" if chapter.is_public else f"{root}{chapter.get_private_absolute_url()}"
@@ -224,7 +224,7 @@ def post_release_to_discord(uri_scheme: str, chapter: Chapter, tumblr_post_url: 
         print("Discord webhook url for release is not set.")
         return
     webhook_id, webhook_token = get_webhook_id_token_from_url(webhook_url)
-    webhook = Webhook.partial(webhook_id, webhook_token, adapter=RequestsWebhookAdapter())
+    webhook = SyncWebhook.partial(webhook_id, webhook_token)
 
     root = f"{uri_scheme}://{settings.CANONICAL_ROOT_DOMAIN}"
     url = f"{root}{chapter.get_absolute_url()}"
@@ -438,10 +438,9 @@ def black_hole_mail(request):
                 content_type="application/json",
             )
         try:
-            webhook = Webhook.partial(
+            webhook = SyncWebhook.partial(
                 settings.MAIL_DISCORD_WEBHOOK_ID,
                 settings.MAIL_DISCORD_WEBHOOK_TOKEN,
-                adapter=RequestsWebhookAdapter(),
             )
             em = Embed(
                 color=0x000000,
